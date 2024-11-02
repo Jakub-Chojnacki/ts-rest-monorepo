@@ -1,0 +1,17 @@
+{
+  "name": "client",
+  "private": true,
+  "version": "0.0.0",
+  "devDependencies": {
+    "turbo": "^2.2.3"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build"
+  },
+  "packageManager": "npm@10.8.2"
+}
