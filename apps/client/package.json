@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.59.18",
+    "@ts-rest/react-query": "^3.51.0",
+    "api-contract": "*",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "api-contract": "*"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
