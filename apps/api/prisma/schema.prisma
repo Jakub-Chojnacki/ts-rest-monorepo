@@ -17,6 +17,7 @@ model User {
   id          String        @id @default(uuid())
   email       String        @unique
   name        String?
+  password    String
   reservations Reservation[]
 }
 
@@ -27,7 +28,7 @@ model Event {
   end         DateTime
   isBooked    Boolean       @default(false)
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  updatedAt   DateTime?      @updatedAt
   reservations Reservation[]  //array since a reservation can be cancelled
 }
 
@@ -35,7 +36,7 @@ model Reservation {
   id          String   @id @default(uuid())
   isCancelled Boolean  @default(false)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime? @updatedAt
 
   event   Event  @relation(fields: [eventId], references: [id])
   eventId String
