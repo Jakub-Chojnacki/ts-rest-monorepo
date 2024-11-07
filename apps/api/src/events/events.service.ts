@@ -11,6 +11,6 @@ export class EventsService {
       data: event,
     });
 
-    return newEvent
+    return newEvent;
   }
 }

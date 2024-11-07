@@ -14,7 +14,7 @@ export class EventsController {
     return tsRestHandler(contract.events, {
       create: async ({ body }) => {
         const newEvent = await this.eventsService.create(body);
-        
+
         return {
           status: 201,
           body: newEvent,
