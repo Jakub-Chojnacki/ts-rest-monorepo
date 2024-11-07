@@ -7,5 +7,8 @@ export const EventSchema = z.object({
   end: z.date(),
   isBooked: z.boolean(),
   createdAt: z.date(),
-  updatedAt: z.date().optional(),
+  updatedAt: z.date(),
 });
+
+
+export type EventType = z.infer<typeof EventSchema>

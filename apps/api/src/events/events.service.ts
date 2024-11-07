@@ -6,11 +6,11 @@ import { PrismaService } from 'src/prisma.service';
 export class EventsService {
   constructor(private prisma: PrismaService) {}
 
-  create(event: Omit<Event, 'id'>) {
-    const newEvent = this.prisma.event.create({
+  async create(event: Omit<Event, 'id'>) {
+    const newEvent = await this.prisma.event.create({
       data: event,
     });
 
-    console.log(newEvent)
+    return newEvent
   }
 }

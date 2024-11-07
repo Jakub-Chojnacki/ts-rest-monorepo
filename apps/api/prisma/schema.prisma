@@ -14,28 +14,28 @@ datasource db {
 }
 
 model User {
-  id          String        @id @default(uuid())
-  email       String        @unique
-  name        String?
-  password    String
+  id           String        @id @default(uuid())
+  email        String        @unique
+  username     String        @unique
+  password     String
   reservations Reservation[]
 }
 
 model Event {
-  id          String        @id @default(uuid())
-  title       String
-  start       DateTime // Maps to timestamp with time zone in PostgreSQL
-  end         DateTime
-  isBooked    Boolean       @default(false)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime?      @updatedAt
-  reservations Reservation[]  //array since a reservation can be cancelled
+  id           String        @id @default(uuid())
+  title        String
+  start        DateTime // Maps to timestamp with time zone in PostgreSQL
+  end          DateTime
+  isBooked     Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime?     @updatedAt
+  reservations Reservation[] //array since a reservation can be cancelled
 }
 
 model Reservation {
-  id          String   @id @default(uuid())
-  isCancelled Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  id          String    @id @default(uuid())
+  isCancelled Boolean   @default(false)
+  createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt
 
   event   Event  @relation(fields: [eventId], references: [id])
