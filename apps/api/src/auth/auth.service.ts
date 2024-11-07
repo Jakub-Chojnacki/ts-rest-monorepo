@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
@@ -18,43 +23,68 @@ export class AuthService {
     username: string,
     password: string,
   ): Promise<Omit<User, 'password' | 'username'> | null> {
-    const user = await this.usersService.findOne(username);
+    try {
+      const user = await this.usersService.findOne(username);
 
-    const passwordMatches = await this.comparePassword(password, user.password);
+      const passwordMatches = await this.comparePassword(
+        password,
+        user.password,
+      );
 
-    if (user && passwordMatches) {
-      const { password, username, ...result } = user;
-      return result;
+      if (passwordMatches) {
+        const { password, username, ...result } = user;
+        return result;
+      }
+
+      throw new UnauthorizedException('Invalid credentials!');
+    } catch (e) {
+      if (e instanceof UnauthorizedException) {
+        throw e; // Re-throw findOne error
+      }
+      throw new UnauthorizedException(e.message);
     }
-
-    return null;
   }
 
   async login(user: User) {
-    const payload = { username: user.username, sub: user.id };
+    try {
+      const payload = { username: user.username, sub: user.id };
 
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+      return {
+        access_token: this.jwtService.sign(payload),
+      };
+    } catch (e) {
+      throw new InternalServerErrorException('Error generating access token!');
+    }
   }
 
   async comparePassword(password: string, hash: string) {
     return await bcrypt.compare(password, hash);
   }
+
   async hashPassword(password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
     return hashedPassword;
   }
 
   async signup({ email, password, username }: Omit<User, 'id'>) {
-    const newUser = await this.prisma.user.create({
-      data: {
-        email,
-        password,
-        username,
-      },
-    });
+    try {
+      const newUser = await this.prisma.user.create({
+        data: {
+          email,
+          password, //it should be hashed before invoking signup()
+          username,
+        },
+      });
 
-    return newUser;
+      return newUser;
+    } catch (e) {
+      if (e.code === 'P2002') {
+        // Prisma error code for unique constraint violation
+        throw new BadRequestException(
+          'User with this email or username already exists',
+        );
+      }
+      throw new InternalServerErrorException('Error creating user');
+    }
   }
 }

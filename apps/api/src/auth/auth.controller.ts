@@ -31,6 +31,7 @@ export class AuthController {
         ...body,
         password: hashedPassword,
       };
+      
       const newUser = await this.authService.signup(userData);
 
       return {
