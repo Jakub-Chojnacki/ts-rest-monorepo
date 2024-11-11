@@ -27,7 +27,7 @@ model Event {
   start        DateTime // Maps to timestamp with time zone in PostgreSQL
   end          DateTime
   isBooked     Boolean       @default(false)
-  createdAt    DateTime      @default(now())
+  createdAt    DateTime?      @default(now())
   updatedAt    DateTime?     @updatedAt
   reservations Reservation[] //array since a reservation can be cancelled
 }

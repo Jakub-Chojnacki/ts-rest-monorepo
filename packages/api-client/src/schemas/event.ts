@@ -3,11 +3,11 @@ import z from "zod";
 export const EventSchema = z.object({
   id: z.string(),
   title: z.string(),
-  start: z.date(),
-  end: z.date(),
-  isBooked: z.boolean(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  start: z.coerce.date(),
+  end: z.coerce.date(),
+  isBooked: z.coerce.boolean().default(false),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 
 
