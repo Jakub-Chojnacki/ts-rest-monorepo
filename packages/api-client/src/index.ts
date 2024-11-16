@@ -12,6 +12,7 @@ import {
   ReservationParamsSchema,
   ReservationSchema,
 } from "./schemas/reservations";
+import { ScheduleSchema } from "./schemas/schedules";
 
 const c = initContract();
 
@@ -103,7 +104,16 @@ export const contract = c.router(
         query: ReservationParamsSchema,
       },
     },
-
+    schedules: {
+      create: {
+        method: "POST",
+        path: "/schedules",
+        body: ScheduleSchema.omit({ id: true }),
+        responses: {
+          201: ScheduleSchema,
+        },
+      }
+    },
     login: {
       method: "POST",
       path: "/login",
