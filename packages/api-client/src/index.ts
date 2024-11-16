@@ -1,4 +1,5 @@
 import { initContract } from "@ts-rest/core";
+import { z } from "zod";
 
 import { EventSchema } from "./schemas/event";
 import {
@@ -7,7 +8,10 @@ import {
   SignupReturnSchema,
   SignupSchema,
 } from "./schemas/auth";
-import { z } from "zod";
+import {
+  ReservationParamsSchema,
+  ReservationSchema,
+} from "./schemas/reservations";
 
 const c = initContract();
 
@@ -55,6 +59,48 @@ export const contract = c.router(
         responses: {
           200: EventSchema,
         },
+      },
+    },
+
+    reservations: {
+      create: {
+        method: "POST",
+        path: "/reservations",
+        body: ReservationSchema.omit({ id: true }),
+        responses: {
+          201: ReservationSchema,
+        },
+      },
+      edit: {
+        method: "PUT",
+        path: "/reservations/:id",
+        body: ReservationSchema,
+        responses: {
+          200: ReservationSchema,
+        },
+      },
+      delete: {
+        method: "DELETE",
+        path: "/reservations/:id",
+        body: z.object({}),
+        responses: {
+          200: ReservationSchema,
+        },
+      },
+      findOne: {
+        method: "GET",
+        path: "/reservations/:id",
+        responses: {
+          200: ReservationSchema,
+        },
+      },
+      findAll: {
+        method: "GET",
+        path: "/reservations",
+        responses: {
+          200: z.array(ReservationSchema),
+        },
+        query: ReservationParamsSchema,
       },
     },
 

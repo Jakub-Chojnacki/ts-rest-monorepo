@@ -16,7 +16,6 @@ export class EventsService {
   constructor(private prisma: PrismaService) {}
 
   async create(event: Omit<TEvent, 'id'>) {
-    console.log(event);
     const newEvent = await this.prisma.event.create({
       data: event,
     });
