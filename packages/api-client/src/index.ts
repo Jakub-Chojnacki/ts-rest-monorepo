@@ -112,6 +112,14 @@ export const contract = c.router(
         responses: {
           201: ScheduleSchema,
         },
+      },
+      edit: {
+        method: "PUT",
+        path: '/schedules/:id',
+        body: ScheduleSchema.omit({ id: true }),
+        responses: {
+          200: ScheduleSchema
+        }
       }
     },
     login: {

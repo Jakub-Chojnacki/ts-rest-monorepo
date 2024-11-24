@@ -66,7 +66,11 @@ export class AuthService {
     return hashedPassword;
   }
 
-  async signup({ email, password, username }: Omit<User, 'id'>) {
+  async signup({
+    email,
+    password,
+    username,
+  }: Pick<User, 'password' | 'username' | 'email'>) {
     try {
       const newUser = await this.prisma.user.create({
         data: {

@@ -67,8 +67,8 @@ model Schedule {
   id String @id @default(uuid())
 
   daysOfWeek DayOfWeek[]
-  startTime  DateTime
-  endTime    DateTime
+  start  DateTime
+  end    DateTime
   duration   Int // in seconds 
 
   createdAt DateTime @default(now())

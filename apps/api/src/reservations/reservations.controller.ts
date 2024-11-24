@@ -6,7 +6,7 @@ import { contract } from 'api-contract';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ReservationsService } from './reservations.service';
 
-@Controller('reservations')
+@Controller()
 export class ReservationsController {
   constructor(private readonly reservationsService: ReservationsService) {}
 
