@@ -1,4 +1,5 @@
 import { defineConfig } from "vite";
+import path from "path";
 import react from "@vitejs/plugin-react";
 import commonjs from "@rollup/plugin-commonjs";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
@@ -14,9 +15,14 @@ export default defineConfig({
   optimizeDeps: {
     include: ["api-contract/**/*"],
   },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
   server: {
     proxy: {
-      api: {
+     '/api': {
         target: "http://localhost:3000",
         changeOrigin: true,
       },
