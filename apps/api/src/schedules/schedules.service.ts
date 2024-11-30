@@ -1,5 +1,16 @@
 import z from 'zod';
 import {
+  format,
+  getYear,
+  getMonth,
+  getDate,
+  getHours,
+  getMinutes,
+  getSeconds,
+  differenceInSeconds,
+  add,
+} from 'date-fns';
+import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
@@ -88,6 +99,134 @@ export class SchedulesService {
       }
 
       throw new InternalServerErrorException('Failed to create schedule');
+    }
+  }
+
+  getDayOfWeek(date: Date) {
+    return format(date, 'EEEE').toUpperCase();
+  }
+
+  getDayOfWeekDailyTiming(date: Date, dailyTimings: TSchedule['dailyTimings']) {
+    const dayOfWeek = this.getDayOfWeek(date);
+    return dailyTimings.find((timing) => timing.dayOfWeek === dayOfWeek);
+  }
+
+  combineDateWithScheduleTime(date: Date, dateWithTime: Date) {
+    const year = getYear(date);
+    const month = getMonth(date) + 1; // Months are 0-indexed in JavaScript
+    const day = getDate(date);
+
+    // Extract hours, minutes, seconds from dateWithTime
+    const hours = getHours(dateWithTime);
+    const minutes = getMinutes(dateWithTime);
+    const seconds = getSeconds(dateWithTime);
+
+    // Create a new Date object with combined values
+    const combinedDate = new Date(
+      year,
+      month - 1,
+      day,
+      hours,
+      minutes,
+      seconds,
+    );
+
+    // Format the result (you can adjust this format as needed)
+    return format(combinedDate, "yyyy-MM-dd'T'HH:mm:ss");
+  }
+  getCountOfEvents(start: Date, end: Date, eventDuration: number) {
+    if (!(start instanceof Date) || !(end instanceof Date)) {
+      throw new Error('Both start and end dates must be valid Date objects');
+    }
+
+    // Calculate total seconds between dates
+    const totalSeconds = differenceInSeconds(end, start);
+
+    // Check if duration is zero or negative
+    if (eventDuration <= 0) {
+      return 0;
+    }
+
+    // Calculate how many blocks fit
+    const blocks = Math.floor(totalSeconds / eventDuration);
+
+    return blocks;
+  }
+
+  addDurationInSeconds(date: Date, durationInSeconds: number) {
+    if (!(date instanceof Date)) {
+      throw new Error('Input must be a valid Date object');
+    }
+
+    const result = add(date, { seconds: durationInSeconds });
+
+    return result;
+  }
+
+  async generateEventsForSingleDay(scheduleId: string, date: Date) {
+    try {
+      const schedule = await this.prisma.schedule.findUnique({
+        where: { id: scheduleId },
+        include: { dailyTimings: true },
+      });
+
+      if (!schedule) {
+        throw new BadRequestException('Schedule not found');
+      }
+
+      const dailyTiming = this.getDayOfWeekDailyTiming(
+        date,
+        schedule.dailyTimings,
+      );
+
+      if (!dailyTiming) {
+        throw new BadRequestException('No schedule was found for this date');
+      }
+
+      const start = this.combineDateWithScheduleTime(date, dailyTiming.start);
+      const end = this.combineDateWithScheduleTime(date, dailyTiming.end);
+
+      const count = this.getCountOfEvents(
+        new Date(start),
+        new Date(end),
+        schedule.eventDuration,
+      );
+
+      if (count < 1) {
+        throw new BadRequestException(
+          'The timeslot of that day is too short to create events',
+        );
+      }
+
+      let currentTime = new Date(start);
+      const preparedEvents = [];
+
+      for (let i = 0; i < count; i++) {
+        const singleEvent = {
+          title: `DailyTiming ${dailyTiming.id} - Slot ${i + 1}`,
+          start: currentTime.toISOString(),
+          end: this.addDurationInSeconds(
+            new Date(currentTime),
+            schedule.eventDuration,
+          ).toISOString(),
+          isBooked: false,
+        };
+
+        preparedEvents.push(singleEvent);
+
+        currentTime = this.addDurationInSeconds(
+          currentTime,
+          schedule.eventDuration,
+        );
+      }
+
+      const events = await this.prisma.event.createManyAndReturn({
+        data: preparedEvents,
+      });
+
+      return events;
+    } catch (err) {
+      throw new InternalServerErrorException(err);
     }
   }
 }

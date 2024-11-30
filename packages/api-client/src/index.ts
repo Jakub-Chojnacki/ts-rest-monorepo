@@ -16,6 +16,8 @@ import { ScheduleSchema } from "./schemas/schedules";
 
 const c = initContract();
 
+export * from "./schemas/event";
+
 export const contract = c.router(
   {
     events: {
@@ -115,12 +117,22 @@ export const contract = c.router(
       },
       edit: {
         method: "PUT",
-        path: '/schedules/:id',
+        path: "/schedules/:id",
         body: ScheduleSchema.omit({ id: true }),
         responses: {
-          200: ScheduleSchema
-        }
-      }
+          200: ScheduleSchema,
+        },
+      },
+      generateEvents: {
+        method: "POST",
+        path: "/schedules/:id/generate",
+        body: z.object({
+          date: z.string().datetime(),
+        }),
+        responses: {
+          201: z.array(EventSchema),
+        },
+      },
     },
     login: {
       method: "POST",
