@@ -58,7 +58,7 @@ const LoginForm = () => {
   };
 
   return (
-    <Card className="mx-auto max-w-sm">
+    <Card className="mx-auto max-w-sm flex-1">
       <CardHeader>
         <CardTitle className="text-2xl">Login</CardTitle>
       </CardHeader>
