@@ -2,9 +2,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import useToken from "@/hooks/useToken";
 
-import LoginPage from "@/pages/LoginPage";
+import SignupPage from "@/pages/SignupPage";
 
-export const Route = createFileRoute("/login")({
+export const Route = createFileRoute("/signup")({
   component: RouteComponent,
 });
 
@@ -13,5 +13,5 @@ function RouteComponent() {
   const navigate = useNavigate({ from: "/login" });
   if (token) navigate({ to: "/" });
 
-  return <LoginPage />;
+  return <SignupPage />;
 }

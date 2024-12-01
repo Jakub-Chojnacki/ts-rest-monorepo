@@ -80,7 +80,13 @@ export class AuthService {
         },
       });
 
-      return newUser;
+      const payload = { username: newUser.username, sub: newUser.id };
+      const token = this.jwtService.sign(payload);
+
+      return {
+        ...newUser,
+        access_token: token,
+      };
     } catch (e) {
       if (e.code === 'P2002') {
         // Prisma error code for unique constraint violation

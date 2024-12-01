@@ -21,4 +21,5 @@ export const SignupReturnSchema = z.object({
     password: z.string(),
     email: z.string(),
     id: z.string(),
+    access_token: z.string()
 })

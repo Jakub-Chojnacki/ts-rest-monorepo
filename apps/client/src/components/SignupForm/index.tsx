@@ -19,6 +19,7 @@ import apiClient from "@/api-client";
 import useToken from "@/hooks/useToken";
 
 const formSchema = z.object({
+  email: z.string().email(),
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
@@ -27,18 +28,19 @@ const formSchema = z.object({
 
 type TLoginFormInput = z.input<typeof formSchema>;
 
-const LoginForm = () => {
+const SignupForm = () => {
   const { setToken } = useToken();
 
   const form = useForm<TLoginFormInput>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      email: "",
       username: "",
       password: "",
     },
   });
 
-  const { mutate } = apiClient.login.useMutation({
+  const { mutate } = apiClient.signup.useMutation({
     onSuccess: (data) => {
       setToken(data.body.access_token);
     },
@@ -58,12 +60,25 @@ const LoginForm = () => {
   return (
     <Card className="mx-auto max-w-sm flex-1">
       <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
+        <CardTitle className="text-2xl">Rejestracja</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Adres email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Adres email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="username"
@@ -96,7 +111,7 @@ const LoginForm = () => {
                 </span>
               )}
               <Button type="submit" className="w-full">
-                Zaloguj się
+                Zarejestruj się
               </Button>
             </form>
           </Form>
@@ -106,4 +121,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default SignupForm;
