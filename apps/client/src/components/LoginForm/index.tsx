@@ -1,8 +1,10 @@
 "use client";
-import { z } from "zod";
-
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import apiClient from "@/api-client";
+
+import useAuth from "@/hooks/useAuth";
 
 import {
   Form,
@@ -15,23 +17,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import apiClient from "@/api-client";
-import useToken from "@/hooks/useToken";
 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  password: z.string().min(6),
-});
-
-type TLoginFormInput = z.input<typeof formSchema>;
+import { loginFormSchema, TLoginFormInput } from "./schema";
 
 const LoginForm = () => {
-  const { setToken } = useToken();
+  const { setAuthData } = useAuth();
 
   const form = useForm<TLoginFormInput>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
       username: "",
       password: "",
@@ -39,13 +32,16 @@ const LoginForm = () => {
   });
 
   const { mutate } = apiClient.login.useMutation({
-    onSuccess: (data) => {
-      setToken(data.body.access_token);
+    onSuccess: ({ body: { access_token, userId } }) => {
+      setAuthData(access_token, userId);
+      toast(
+        "Udało się zalogować. Zostaniesz przeniesiony/a do ekranu głównego!"
+      );
     },
     onError: () => {
       form.setError("root", {
         message:
-          "Wystąpił błąd! Upewnij się, że podałeś poprawny login i hasło",
+          "Wystąpił błąd! Upewnij się, że podałeś/aś poprawny login i hasło",
       });
     },
   });

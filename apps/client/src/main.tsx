@@ -14,7 +14,8 @@ declare module "@tanstack/react-router" {
     router: typeof router;
   }
 }
-const queryClient = new QueryClient(); //Connect to contact query client
+
+export const queryClient = new QueryClient(); //Connect to contact query client
 
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {

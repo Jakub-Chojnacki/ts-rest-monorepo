@@ -1,8 +1,10 @@
 "use client";
-import { z } from "zod";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import apiClient from "@/api-client";
+
+import useAuth from "@/hooks/useAuth";
 
 import {
   Form,
@@ -15,24 +17,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import apiClient from "@/api-client";
-import useToken from "@/hooks/useToken";
 
-const formSchema = z.object({
-  email: z.string().email(),
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  password: z.string().min(6),
-});
-
-type TLoginFormInput = z.input<typeof formSchema>;
+import { TSignupFormInput, signupFormSchema } from "./schema";
 
 const SignupForm = () => {
-  const { setToken } = useToken();
+  const { setAuthData } = useAuth();
 
-  const form = useForm<TLoginFormInput>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<TSignupFormInput>({
+    resolver: zodResolver(signupFormSchema),
     defaultValues: {
       email: "",
       username: "",
@@ -42,17 +34,19 @@ const SignupForm = () => {
 
   const { mutate } = apiClient.signup.useMutation({
     onSuccess: (data) => {
-      setToken(data.body.access_token);
+      setAuthData(data.body.access_token, data.body.id);
+      toast(
+        "Konto zostało utworzone. Zostaniesz przeniesiony/a do ekranu głównego!"
+      );
     },
     onError: () => {
       form.setError("root", {
-        message:
-          "Wystąpił błąd! Upewnij się, że podałeś poprawny login i hasło",
+        message: "Wystąpił błąd podczas tworzenia konta! Spróbuj ponownie.",
       });
     },
   });
 
-  const onSubmit = (values: TLoginFormInput): void => {
+  const onSubmit = (values: TSignupFormInput): void => {
     form.clearErrors();
     mutate({ body: values });
   };

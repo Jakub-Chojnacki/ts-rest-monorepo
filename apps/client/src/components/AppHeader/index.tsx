@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router";
-
-import useToken from "@/hooks/useToken";
 import { Fragment } from "react/jsx-runtime";
+
+import useAuth from "@/hooks/useAuth";
+
 import { Button } from "../ui/button";
 
 const AppHeader = () => {
-  const { token, signOut } = useToken();
+  const { signOut, isAuthenticated } = useAuth();
 
   return (
     <div
@@ -15,7 +16,7 @@ const AppHeader = () => {
         CodeFitness
       </Link>
       <div className="flex gap-4 items-center ml-auto">
-        {!token && (
+        {!isAuthenticated && (
           <Fragment>
             <Link to="/login" className="[&.active]:font-bold">
               <Button variant="secondary"> Logowanie</Button>
@@ -25,7 +26,7 @@ const AppHeader = () => {
             </Link>
           </Fragment>
         )}
-        {token && <Button onClick={signOut}>Wyloguj</Button>}
+        {isAuthenticated && <Button onClick={signOut}>Wyloguj</Button>}
       </div>
     </div>
   );

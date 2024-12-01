@@ -17,6 +17,9 @@ import { ScheduleSchema } from "./schemas/schedules";
 const c = initContract();
 
 export * from "./schemas/event";
+export * from "./schemas/auth";
+export * from "./schemas/reservations";
+export * from "./schemas/schedules";
 
 export const contract = c.router(
   {

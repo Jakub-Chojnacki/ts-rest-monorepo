@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
-import useToken from "@/hooks/useToken";
+import useAuth from "@/hooks/useAuth";
 
 import SignupPage from "@/pages/SignupPage";
 
@@ -9,9 +9,10 @@ export const Route = createFileRoute("/signup")({
 });
 
 function RouteComponent() {
-  const { token } = useToken();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate({ from: "/login" });
-  if (token) navigate({ to: "/" });
+  
+  if (isAuthenticated) navigate({ to: "/" });
 
   return <SignupPage />;
 }

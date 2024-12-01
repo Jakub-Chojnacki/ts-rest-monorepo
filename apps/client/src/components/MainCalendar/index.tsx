@@ -1,25 +1,51 @@
-import { useMemo } from "react";
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay } from "date-fns";
-import { pl } from "date-fns/locale";
-
-import { messages } from "./const";
-
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-const locales = {
-  pl: pl,
-};
+import { useMemo, useState } from "react";
+import { Calendar } from "react-big-calendar";
+import { toast } from "sonner";
 
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
+import apiClient from "@/api-client";
+import useAuth from "@/hooks/useAuth";
+
+import { type EventType } from "api-contract";
+import { queryClient } from "@/main";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Button } from "../ui/button";
+
+import { messages } from "./const";
+import { eventPropGetter, formats, localizer } from "./utils";
+import getReadableDate from "@/utils/getReadableDate";
 
 const MainCalendar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);
+
+  const { authHeader, userId } = useAuth();
+
+  const { data } = apiClient.events.getMany.useQuery(["allEvents"], {
+    extraHeaders: authHeader,
+  });
+
+  const { mutate } = apiClient.reservations.create.useMutation({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allEvents"] });
+      toast("Udało się utworzyć rezerwację!");
+      handleCloseDialog();
+    },
+  });
+
+  const modifiedData = useMemo(
+    () =>
+      data?.body.map((event) => {
+        return {
+          ...event,
+          start: new Date(event.start),
+          end: new Date(event.end),
+        };
+      }),
+    [data]
+  );
+
   const { defaultDate, views } = useMemo(
     () => ({
       defaultDate: new Date(),
@@ -32,45 +58,35 @@ const MainCalendar = () => {
     []
   );
 
-  const events = [
-    {
-      id: 1,
-      title: "Blok treningowy",
-      start: new Date(2024, 10, 7, 8),
-      end: new Date(2024, 10, 7, 9, 30),
-      isBooked: false,
-    },
-    {
-      id: 2,
-      title: "Blok treningowy",
-      start: new Date(2024, 10, 7, 9, 30),
-      end: new Date(2024, 10, 7, 11),
-      isBooked: true,
-    },
-    {
-      id: 3,
-      title: "Blok treningowy",
-      start: new Date(2024, 10, 7, 11),
-      end: new Date(2024, 10, 7, 12, 30),
-      isBooked: false,
-    },
-  ];
+  const handleSelectEvent = (event: EventType) => {
+    const { isBooked } = event;
 
-  const eventPropGetter = (event: (typeof events)[0]) => {
-    const style = {
-      backgroundColor: event.isBooked ? "red" : "green",
-      color: "white",
-      borderRadius: "5px",
-      border: "none",
-      display: "block",
-    };
-    return {
-      style: style,
-    };
+    if (isBooked) {
+      return toast("Ten termin jest już zajęty!");
+    }
+
+    handleOpenDialog();
+    setSelectedEvent(event);
   };
 
-  const handleSelectEvent = (event: (typeof events)[0]) => {
-    alert(`Event: ${event.title}\nBooked: ${event.isBooked ? "Yes" : "No"}`);
+  const handleOpenDialog = () => setIsOpen(true);
+
+  const handleMakeReservation = () => {
+    if (!userId || !selectedEvent) return;
+
+    mutate({
+      body: {
+        eventId: selectedEvent.id,
+        isCancelled: false,
+        userId,
+      },
+      extraHeaders: authHeader,
+    });
+  };
+
+  const handleCloseDialog = () => {
+    setIsOpen(false);
+    setTimeout(() => setSelectedEvent(null), 500); //to prevent flickering
   };
 
   return (
@@ -82,16 +98,39 @@ const MainCalendar = () => {
         views={views}
         startAccessor="start"
         endAccessor="end"
-        events={events}
+        events={modifiedData || []}
         eventPropGetter={eventPropGetter}
         onSelectEvent={handleSelectEvent}
         culture="pl"
-        formats={{
-          monthHeaderFormat: (date) =>
-            format(date, "LLLL yyyy", { locale: pl }),
-        }}
+        formats={formats}
         messages={messages}
       />
+      <Dialog open={isOpen} onOpenChange={(open) => setIsOpen(open)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Czy na pewno chcesz zarezerwować ten termin?
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <div className="">
+              {selectedEvent && (
+                <div>
+                  <p>Trening personalny</p>
+                  <p>Start: {getReadableDate(selectedEvent.start)}</p>
+                  <p>Koniec: {getReadableDate(selectedEvent.end)}</p>
+                </div>
+              )}
+            </div>
+            <div className="flex gap-4">
+              <Button variant="ghost" onClick={handleMakeReservation}>
+                Zarezerwuj
+              </Button>
+              <Button onClick={handleCloseDialog}>Anuluj</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

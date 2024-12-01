@@ -23,6 +23,15 @@ export class ReservationsService {
         data: validatedReservation,
       });
 
+      await this.prisma.event.update({
+        where: {
+          id: reservation.eventId,
+        },
+        data: {
+          isBooked: true,
+        },
+      });
+
       return newReservation;
     } catch (error) {
       if (error instanceof z.ZodError) {
