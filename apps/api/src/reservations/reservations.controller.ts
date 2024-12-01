@@ -38,12 +38,29 @@ export class ReservationsController {
           body: deletedReservation,
         };
       },
+      cancel: async ({ params: { id } }) => {
+        const cancelledReservation = await this.reservationsService.cancel(id);
+
+        return {
+          status: 200,
+          body: cancelledReservation,
+        };
+      },
       findOne: async ({ params: { id } }) => {
         const foundReservation = await this.reservationsService.findOne(id);
 
         return {
           status: 200,
           body: foundReservation,
+        };
+      },
+      findUserReservations: async ({ params: { userId } }) => {
+        const userReservations =
+          await this.reservationsService.findUserReservations(userId);
+
+        return {
+          status: 200,
+          body: userReservations,
         };
       },
       findAll: async ({ query: { isCancelled } }) => {

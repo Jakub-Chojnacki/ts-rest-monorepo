@@ -50,9 +50,9 @@ export class ReservationsService {
     }
   }
 
-  findAll(isCancelled: boolean = false) {
+  async findAll(isCancelled: boolean = false) {
     try {
-      const reservations = this.prisma.reservation.findMany({
+      const reservations = await this.prisma.reservation.findMany({
         include: {
           user: true,
           event: true,
@@ -68,9 +68,9 @@ export class ReservationsService {
     }
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     try {
-      const foundReservation = this.prisma.reservation.findUnique({
+      const foundReservation = await this.prisma.reservation.findUnique({
         where: {
           id,
         },
@@ -81,8 +81,65 @@ export class ReservationsService {
       throw new InternalServerErrorException('Failed to find reservation');
     }
   }
+  async cancel(id: string) {
+    try {
+      const [_, cancelledReservation] = await this.prisma.$transaction(
+        async (prisma) => {
+          const foundEvent = await prisma.event.findFirst({
+            where: {
+              reservations: {
+                some: {
+                  id,
+                },
+              },
+            },
+          });
 
-  edit(id: string, reservation: TReservation) {
+          const cancelledReservation = await prisma.reservation.update({
+            where: {
+              id,
+            },
+            data: {
+              isCancelled: true,
+            },
+          });
+
+          await prisma.event.update({
+            where: {
+              id: foundEvent.id,
+            },
+            data: {
+              isBooked: false,
+            },
+          });
+
+          return [foundEvent, cancelledReservation];
+        },
+      );
+
+      return cancelledReservation;
+    } catch {
+      throw new InternalServerErrorException('Failed to cancel reservation');
+    }
+  }
+
+  async findUserReservations(userId: string) {
+    try {
+      const userReservations = await this.prisma.reservation.findMany({
+        where: {
+          userId,
+        },
+      });
+
+      return userReservations;
+    } catch {
+      throw new InternalServerErrorException(
+        'Failed to find user reservations',
+      );
+    }
+  }
+  
+  async edit(id: string, reservation: TReservation) {
     try {
       const editedReservation = this.prisma.reservation.update({
         where: {
@@ -101,9 +158,9 @@ export class ReservationsService {
     }
   }
 
-  delete(id: string) {
+  async delete(id: string) {
     try {
-      const deletedReservation = this.prisma.reservation.delete({
+      const deletedReservation = await this.prisma.reservation.delete({
         where: {
           id,
         },

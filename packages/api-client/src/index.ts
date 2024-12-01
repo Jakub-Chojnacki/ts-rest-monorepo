@@ -93,11 +93,26 @@ export const contract = c.router(
           200: ReservationSchema,
         },
       },
+      cancel: {
+        method: "POST",
+        path: "/reservations/:id/cancel",
+        body: z.object({}),
+        responses: {
+          200: ReservationSchema,
+        },
+      },
       findOne: {
         method: "GET",
         path: "/reservations/:id",
         responses: {
           200: ReservationSchema,
+        },
+      },
+      findUserReservations: {
+        method: "GET",
+        path: "/reservations/user/:userId",
+        responses: {
+          200: z.array(ReservationSchema),
         },
       },
       findAll: {
