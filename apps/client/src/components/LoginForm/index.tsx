@@ -33,9 +33,8 @@ const formSchema = z.object({
 type TLoginFormInput = z.input<typeof formSchema>;
 
 const LoginForm = () => {
-  const { setToken, token } = useToken();
+  const { setToken } = useToken();
 
-  console.log(token)
   const form = useForm<TLoginFormInput>({
     resolver: zodResolver(formSchema),
   });

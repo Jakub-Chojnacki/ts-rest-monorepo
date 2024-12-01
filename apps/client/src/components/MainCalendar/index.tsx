@@ -70,7 +70,6 @@ const MainCalendar = () => {
   };
 
   const handleSelectEvent = (event: (typeof events)[0]) => {
-    console.log("Event clicked:", event);
     alert(`Event: ${event.title}\nBooked: ${event.isBooked ? "Yes" : "No"}`);
   };
 

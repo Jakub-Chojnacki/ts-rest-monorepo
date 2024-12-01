@@ -116,12 +116,10 @@ export class SchedulesService {
     const month = getMonth(date) + 1; // Months are 0-indexed in JavaScript
     const day = getDate(date);
 
-    // Extract hours, minutes, seconds from dateWithTime
     const hours = getHours(dateWithTime);
     const minutes = getMinutes(dateWithTime);
     const seconds = getSeconds(dateWithTime);
 
-    // Create a new Date object with combined values
     const combinedDate = new Date(
       year,
       month - 1,
@@ -131,7 +129,6 @@ export class SchedulesService {
       seconds,
     );
 
-    // Format the result (you can adjust this format as needed)
     return format(combinedDate, "yyyy-MM-dd'T'HH:mm:ss");
   }
   getCountOfEvents(start: Date, end: Date, eventDuration: number) {
@@ -139,10 +136,8 @@ export class SchedulesService {
       throw new Error('Both start and end dates must be valid Date objects');
     }
 
-    // Calculate total seconds between dates
     const totalSeconds = differenceInSeconds(end, start);
 
-    // Check if duration is zero or negative
     if (eventDuration <= 0) {
       return 0;
     }
@@ -194,7 +189,7 @@ export class SchedulesService {
 
       if (count < 1) {
         throw new BadRequestException(
-          'The timeslot of that day is too short to create events',
+          'The time slot of that day is too short to create events',
         );
       }
 
