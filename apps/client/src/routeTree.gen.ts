@@ -13,7 +13,9 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as UserReservationsImport } from './routes/user-reservations'
 import { Route as SignupImport } from './routes/signup'
+import { Route as ProfileImport } from './routes/profile'
 import { Route as LoginImport } from './routes/login'
 
 // Create Virtual Routes
@@ -22,9 +24,21 @@ const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
 
+const UserReservationsRoute = UserReservationsImport.update({
+  id: '/user-reservations',
+  path: '/user-reservations',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const SignupRoute = SignupImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ProfileRoute = ProfileImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -58,11 +72,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileImport
+      parentRoute: typeof rootRoute
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupImport
+      parentRoute: typeof rootRoute
+    }
+    '/user-reservations': {
+      id: '/user-reservations'
+      path: '/user-reservations'
+      fullPath: '/user-reservations'
+      preLoaderRoute: typeof UserReservationsImport
       parentRoute: typeof rootRoute
     }
   }
@@ -73,41 +101,57 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/user-reservations': typeof UserReservationsRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/user-reservations': typeof UserReservationsRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/user-reservations': typeof UserReservationsRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup'
+  fullPaths: '/' | '/login' | '/profile' | '/signup' | '/user-reservations'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup'
-  id: '__root__' | '/' | '/login' | '/signup'
+  to: '/' | '/login' | '/profile' | '/signup' | '/user-reservations'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/profile'
+    | '/signup'
+    | '/user-reservations'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   LoginRoute: typeof LoginRoute
+  ProfileRoute: typeof ProfileRoute
   SignupRoute: typeof SignupRoute
+  UserReservationsRoute: typeof UserReservationsRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   LoginRoute: LoginRoute,
+  ProfileRoute: ProfileRoute,
   SignupRoute: SignupRoute,
+  UserReservationsRoute: UserReservationsRoute,
 }
 
 export const routeTree = rootRoute
@@ -122,7 +166,9 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/login",
-        "/signup"
+        "/profile",
+        "/signup",
+        "/user-reservations"
       ]
     },
     "/": {
@@ -131,8 +177,14 @@ export const routeTree = rootRoute
     "/login": {
       "filePath": "login.tsx"
     },
+    "/profile": {
+      "filePath": "profile.tsx"
+    },
     "/signup": {
       "filePath": "signup.tsx"
+    },
+    "/user-reservations": {
+      "filePath": "user-reservations.tsx"
     }
   }
 }
