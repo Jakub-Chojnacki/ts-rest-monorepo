@@ -129,6 +129,9 @@ export class ReservationsService {
         where: {
           userId,
         },
+        include: {
+          event: true,
+        },
       });
 
       return userReservations;
@@ -138,7 +141,7 @@ export class ReservationsService {
       );
     }
   }
-  
+
   async edit(id: string, reservation: TReservation) {
     try {
       const editedReservation = this.prisma.reservation.update({

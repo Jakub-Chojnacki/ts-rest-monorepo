@@ -18,7 +18,7 @@ import { TDropdownMenuConfig } from "./types";
 const AppHeader = () => {
   const { signOut, isAuthenticated } = useAuth();
 
-  const dropdownMenuConfig:TDropdownMenuConfig[] = [
+  const dropdownMenuConfig: TDropdownMenuConfig[] = [
     {
       label: "Mój profil",
       icon: UserPen,
@@ -59,12 +59,12 @@ const AppHeader = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 {dropdownMenuConfig.map(({ icon: Icon, label, path }) => (
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Link to={path} className="flex items-center">
+                  <Link to={path} key={path} className="flex items-center">
+                    <DropdownMenuItem className="cursor-pointer">
                       <Icon className="mr-2 h-4 w-4" />
                       {label}
-                    </Link>
-                  </DropdownMenuItem>
+                    </DropdownMenuItem>
+                  </Link>
                 ))}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="cursor-pointer" onClick={signOut}>
