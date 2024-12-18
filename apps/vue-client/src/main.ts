@@ -1,6 +1,7 @@
 import { createMemoryHistory, createRouter } from "vue-router";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+import { VueQueryPlugin } from "@tanstack/vue-query";
 
 import App from "./App.vue";
 import HelloWorld from "./components/HelloWorld.vue";
@@ -16,4 +17,4 @@ const router = createRouter({
   routes,
 });
 
-createApp(App).use(pinia).use(router).mount("#app");
+createApp(App).use(pinia).use(VueQueryPlugin).use(router).mount("#app");

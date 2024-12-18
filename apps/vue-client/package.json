@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@rollup/plugin-commonjs": "^28.0.1",
+    "@tanstack/vue-query": "^5.62.8",
+    "@tanstack/vue-query-devtools": "^5.62.8",
+    "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-vue-next": "^0.468.0",
