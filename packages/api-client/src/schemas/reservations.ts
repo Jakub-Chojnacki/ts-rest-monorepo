@@ -7,7 +7,6 @@ export const ReservationSchema = z.object({
   isCancelled: z.boolean(),
   eventId: z.string(),
   userId: z.string(),
-  event: EventSchema
 });
 
 export const ReservationParamsSchema = z.object({

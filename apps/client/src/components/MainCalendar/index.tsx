@@ -22,7 +22,7 @@ const MainCalendar = () => {
 
   const { authHeader, userId } = useAuth();
 
-  const { data } = apiClient.events.getMany.useQuery(["allEvents"], {
+  const { data,  } = apiClient.events.getMany.useQuery(["allEvents"], {
     extraHeaders: authHeader,
   });
 
