@@ -4,6 +4,8 @@ const animate = require("tailwindcss-animate");
 module.exports = {
   darkMode: ["class"],
   safelist: ["dark"],
+  prefix: "",
+
   content: [
     "./pages/**/*.{ts,tsx,vue}",
     "./components/**/*.{ts,tsx,vue}",
@@ -54,6 +56,10 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+      },
+      height: {
+        header: "var(--header-height)",
+        fullNoHeader: "calc(100dvh - var(--header-height))",
       },
       borderRadius: {
         xl: "calc(var(--radius) + 4px)",

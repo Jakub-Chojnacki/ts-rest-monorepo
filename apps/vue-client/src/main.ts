@@ -1,19 +1,30 @@
-import { createMemoryHistory, createRouter } from "vue-router";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { VueQueryPlugin } from "@tanstack/vue-query";
+import { createRouter, createWebHistory } from "vue-router";
 
 import App from "./App.vue";
 
-import "./style.css";
 import HomePage from "./pages/HomePage.vue";
+import LoginPage from "./pages/LoginPage.vue";
+import SignupPage from "./pages/SignupPage.vue";
+
+import "./assets/index.css";
+
+const routes = [
+  { path: "/", component: HomePage, name: "home" },
+  {
+    path: "/login",
+    component: LoginPage,
+    name: "login",
+  },
+  { path: "/signup", component: SignupPage, name: "signup" },
+];
 
 const pinia = createPinia();
 
-const routes = [{ path: "/", component: HomePage }];
-
 const router = createRouter({
-  history: createMemoryHistory(),
+  history: createWebHistory(),
   routes,
 });
 
