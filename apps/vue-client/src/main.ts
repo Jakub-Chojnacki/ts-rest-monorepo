@@ -4,13 +4,13 @@ import { createPinia } from "pinia";
 import { VueQueryPlugin } from "@tanstack/vue-query";
 
 import App from "./App.vue";
-import HelloWorld from "./components/HelloWorld.vue";
 
 import "./style.css";
+import HomePage from "./pages/HomePage.vue";
 
 const pinia = createPinia();
 
-const routes = [{ path: "/", component: HelloWorld }];
+const routes = [{ path: "/", component: HomePage }];
 
 const router = createRouter({
   history: createMemoryHistory(),

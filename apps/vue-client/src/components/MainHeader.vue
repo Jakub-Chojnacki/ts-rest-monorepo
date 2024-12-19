@@ -1,14 +1,9 @@
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 
 <template>
-    <div class="tw-px-4 tw-gap-2 tw-bg-black tw-text-white tw-h-header tw-flex tw-items-center">
-
-        header
-    </div>
+  <div class="px-4 gap-2 bg-black text-white -h-header flex items-center">
+    header
+  </div>
 </template>
-
-
 
 <style scoped></style>
