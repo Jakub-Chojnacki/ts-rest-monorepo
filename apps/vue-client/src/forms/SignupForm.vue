@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
-import * as z from "zod";
 import { useRouter } from "vue-router";
+import { toast } from "vue-sonner";
+import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,16 +19,20 @@ import CardHeader from "@/components/ui/card/CardHeader.vue";
 import CardTitle from "@/components/ui/card/CardTitle.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
 import apiClient from "@/api-client";
-import { toast } from "vue-sonner";
 
 const router = useRouter();
 
 const formSchema = toTypedSchema(
   z.object({
-    username: z.string(),
+    email: z
+      .string()
+      .email({ message: "Wpisana wartość nie jest poprawnym adresem email" }),
+    username: z
+      .string()
+      .min(6, { message: "Nazwa użytkownika musi mieć minimum 6 znaków" }),
     password: z
       .string()
-      .min(6, { message: "Hasło musi być dłuższe niż 5 znaków" }),
+      .min(6, { message: "Hasło musi miec minimum 6 znaków" }),
   })
 );
 
@@ -35,16 +40,17 @@ const { isSubmitting, ...form } = useForm({
   validationSchema: formSchema,
 });
 
-const { mutate } = apiClient.login.useMutation({
+const { mutate } = apiClient.signup.useMutation({
   onSuccess: () => {
     toast.success(
-      "Udało się zalogować. Zostaniesz przeniesiony/a do ekranu głównego!"
+      "Udało się zarejestrować. Zostaniesz przeniesiony/a do ekranu głównego!"
     );
+
     form.handleReset();
-    router.push("/"); //TODO: Change push to dashboard
+    router.push('/') //TODO: Change push to dashboard
   },
   onError: () => {
-    toast.error("Wystąpił błąd podczas logowania!");
+    toast.error("Wystąpił błąd podczas rejestracji!");
   },
 });
 
@@ -54,10 +60,22 @@ const onSubmit = form.handleSubmit((values) => mutate({ body: values }));
 <template>
   <Card class="mx-auto max-w-sm flex-1 flex flex-col justify-center gap-4">
     <CardHeader>
-      <CardTitle class="text-2xl">Login</CardTitle>
+      <CardTitle class="text-2xl">Rejestracja</CardTitle>
     </CardHeader>
     <CardContent>
       <form @submit="onSubmit" class="flex flex-col gap-4">
+        <FormField v-slot="{ componentField }" name="email">
+          <FormItem>
+            <FormLabel>Adres email</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder="Adres email"
+                v-bind="componentField"
+              />
+            </FormControl>
+          </FormItem>
+        </FormField>
         <FormField v-slot="{ componentField }" name="username">
           <FormItem>
             <FormLabel>Nazwa użytkownika</FormLabel>
@@ -84,7 +102,9 @@ const onSubmit = form.handleSubmit((values) => mutate({ body: values }));
             <FormMessage />
           </FormItem>
         </FormField>
-        <Button type="submit" :disabled="isSubmitting"> Zaloguj się </Button>
+        <Button type="submit" :disabled="isSubmitting">
+          Zarejestruj się
+        </Button>
       </form>
     </CardContent>
   </Card>

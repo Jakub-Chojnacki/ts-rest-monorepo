@@ -5,7 +5,9 @@ import LoginForm from "../forms/LoginForm.vue";
 
 <template>
   <MainLayout>
-    <LoginForm/>
+    <div class="h-fullNoHeader flex items-center justify-center">
+      <LoginForm />
+    </div>
   </MainLayout>
 </template>
 
