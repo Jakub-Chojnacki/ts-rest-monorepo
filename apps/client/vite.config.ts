@@ -1,12 +1,19 @@
 import { defineConfig } from "vite";
-import path from "path";
-import react from "@vitejs/plugin-react";
+import vue from "@vitejs/plugin-vue";
 import commonjs from "@rollup/plugin-commonjs";
-import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import autoprefixer from "autoprefixer";
+import tailwind from "tailwindcss";
+import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), TanStackRouterVite()],
+  // @ts-ignore: There is a problem with current version of vue plugin
+  plugins: [vue()],
+  css: {
+    postcss: {
+      plugins: [tailwind(), autoprefixer()],
+    },
+  },
   build: {
     rollupOptions: {
       plugins: [commonjs()],
@@ -22,8 +29,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-     '/api': {
-        target: "http://localhost:3000",
+      "/api": {
+        target: "http://localhost:3000", //TODO: Change for prod and store in env
         changeOrigin: true,
       },
     },

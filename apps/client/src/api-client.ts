@@ -1,4 +1,4 @@
-import { initQueryClient } from "@ts-rest/react-query";
+import { initQueryClient } from "@ts-rest/vue-query";
 import { contract } from "api-contract";
 
 export const apiClient = initQueryClient(contract, {
