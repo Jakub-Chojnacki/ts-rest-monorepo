@@ -3,8 +3,10 @@ import MainHeader from "./MainHeader.vue";
 </script>
 
 <template>
-  <MainHeader />
-  <slot/>
+  <div class="min-h-[100dvh]">
+    <MainHeader />
+    <slot />
+  </div>
 </template>
 
 <style scoped></style>

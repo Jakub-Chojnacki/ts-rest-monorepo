@@ -61,6 +61,9 @@ module.exports = {
         header: "var(--header-height)",
         fullNoHeader: "calc(100dvh - var(--header-height))",
       },
+      spacing: {
+        headerHeight: "var(--header-height)",
+      },
       borderRadius: {
         xl: "calc(var(--radius) + 4px)",
         lg: "var(--radius)",
