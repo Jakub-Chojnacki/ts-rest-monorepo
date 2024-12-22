@@ -4,6 +4,7 @@ import { onMounted, reactive, ref, watch } from "vue";
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import plLocale from "@fullcalendar/core/locales/pl";
 import interactionPlugin from "@fullcalendar/interaction";
 import apiClient from "@/api-client";
 import { storeToRefs } from "pinia";
@@ -24,6 +25,12 @@ const { data, isLoading } = apiClient.events.getMany.useQuery(
 const calendarOptions = reactive({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
   initialView: "dayGridMonth",
+  locale: plLocale,
+  headerToolbar: {
+    left: "prev,today,next",
+    center: "title",
+    right: "dayGridMonth,timeGridWeek,timeGridDay",
+  },
   events: data.value?.body || [],
 });
 
@@ -46,7 +53,10 @@ onMounted(() => {
     v-if="!isLoading"
   >
     <template v-slot:eventContent="arg">
-      <div class="w-full" :class="`${arg.event.extendedProps.isBooked ? 'bg-red-400' : 'bg-green-300'}`">
+      <div
+        class="w-full"
+        :class="`${arg.event.extendedProps.isBooked ? 'bg-red-400' : 'bg-green-300'}`"
+      >
         <b>{{ arg.timeText }}</b>
         <i>Blok treningowy</i>
       </div>

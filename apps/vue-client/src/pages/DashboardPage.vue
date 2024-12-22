@@ -5,7 +5,7 @@ import MainCalendar from "@/components/MainCalendar.vue";
 
 <template>
   <MainLayout>
-    <div class="h-fullNoHeader">
+    <div class="h-fullNoHeader p-4">
       <MainCalendar />
     </div>
   </MainLayout>
