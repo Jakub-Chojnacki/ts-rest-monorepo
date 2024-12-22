@@ -5,6 +5,8 @@ import { useRouter } from "vue-router";
 import { toast } from "vue-sonner";
 import * as z from "zod";
 
+import { useAuthStore } from "@/store/AuthStore";
+
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
@@ -21,6 +23,7 @@ import CardContent from "@/components/ui/card/CardContent.vue";
 import apiClient from "@/api-client";
 
 const router = useRouter();
+const { handleLogin } = useAuthStore();
 
 const formSchema = toTypedSchema(
   z.object({
@@ -41,13 +44,14 @@ const { isSubmitting, ...form } = useForm({
 });
 
 const { mutate } = apiClient.signup.useMutation({
-  onSuccess: () => {
+  onSuccess: ({ body }) => {
     toast.success(
       "Udało się zarejestrować. Zostaniesz przeniesiony/a do ekranu głównego!"
     );
+    handleLogin(body.access_token);
 
     form.handleReset();
-    router.push('/') //TODO: Change push to dashboard
+    router.push("/dashboard");
   },
   onError: () => {
     toast.error("Wystąpił błąd podczas rejestracji!");
