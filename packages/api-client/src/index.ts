@@ -12,7 +12,7 @@ import {
   ReservationParamsSchema,
   ReservationSchema,
 } from "./schemas/reservations";
-import { ScheduleSchema } from "./schemas/schedules";
+import { ScheduleSchema, ScheduleSchemaPost } from "./schemas/schedules";
 
 const c = initContract();
 
@@ -128,7 +128,7 @@ export const contract = c.router(
       create: {
         method: "POST",
         path: "/schedules",
-        body: ScheduleSchema.omit({ id: true }),
+        body: ScheduleSchemaPost,
         responses: {
           201: ScheduleSchema,
         },

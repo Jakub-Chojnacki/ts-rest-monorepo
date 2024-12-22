@@ -27,6 +27,12 @@ export const ScheduleSchema = z.object({
   userId: z.string(),
 });
 
+export const ScheduleSchemaPost = z.object({
+  dailyTimings: z.array(DailyTimingSchema),
+  eventDuration: z.number(),
+  userId: z.string(),
+});
+
 export type TSchedule = z.infer<typeof ScheduleSchema>;
 
 export type TDailyTiming = z.infer<typeof DailyTimingSchema>;

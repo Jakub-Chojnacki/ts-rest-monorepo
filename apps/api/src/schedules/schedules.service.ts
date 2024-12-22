@@ -33,20 +33,7 @@ export class SchedulesService {
           },
         });
 
-        const dailyTimings = [
-          {
-            dayOfWeek: 'MONDAY',
-            start: new Date('2023-01-01T09:00:00'),
-            end: new Date('2023-01-01T10:00:00'),
-            scheduleId: newSchedule.id,
-          },
-          {
-            dayOfWeek: 'TUESDAY',
-            start: new Date('2023-01-01T08:00:00'),
-            end: new Date('2023-01-01T16:30:00'),
-            scheduleId: newSchedule.id,
-          },
-        ];
+        const { dailyTimings } = schedule;
 
         const createdDailyTimings =
           await prisma.dailyTiming.createManyAndReturn({
