@@ -7,7 +7,7 @@ The repository follows a monorepo structure with the following main packages:
 
 /apps/api: The NestJS backend application, uses PostgreSQL and Prisma to communicate with it
 
-/apps/client: The React frontend application that interacts with the API.
+/apps/client: The Vue frontend application that interacts with the API.
 
 /packages/api-client: Shared API contract definitions using ts-rest to ensure type safety between the frontend and backend. It's an internal package that is imported in both parts of the app
 
