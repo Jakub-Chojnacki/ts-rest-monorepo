@@ -3,8 +3,9 @@ import { useLocalStorage } from "@vueuse/core";
 import { ref } from "vue";
 
 export const useAuthStore = defineStore("auth", () => {
+  //This entire store will be refactored when refresh tokens are added
   const accessToken = useLocalStorage<string>("access_token", "");
-  const userId = ref<string | null>(null);
+  const userId = useLocalStorage<string>("userId", "");
 
   const authHeader = ref(
     accessToken.value ? { Authorization: `Bearer ${accessToken.value}` } : {}
@@ -23,7 +24,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   const handleLogout = (): void => {
     accessToken.value = "";
-    userId.value = null;
+    userId.value = "";
   };
 
   return {

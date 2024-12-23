@@ -2,6 +2,8 @@
 import { storeToRefs } from "pinia";
 import apiClient from "@/api-client";
 import { EventType } from "api-contract";
+import { queryClient } from "@/lib/vue-query";
+import { toast } from "vue-sonner";
 
 import { useAuthStore } from "@/store/AuthStore";
 
@@ -26,8 +28,18 @@ type TProps = {
 const { showModal, handleCloseModal, selectedEvent } = defineProps<TProps>();
 const { authHeader, userId } = storeToRefs(useAuthStore());
 
-const { mutate } = apiClient.reservations.create.useMutation();
-
+const { mutate, isLoading } = apiClient.reservations.create.useMutation({
+  onSuccess: () => {
+    toast.success("Udało się zarezerować blok treningowy!");
+    queryClient.invalidateQueries(["allEvents"]);
+  },
+  onError: () => {
+    toast.error("Wystąpił błąd podczas rezerwacji bloku treningowego!");
+  },
+  onSettled: () => {
+    handleCloseModal();
+  },
+});
 const handleCreateReservation = (): void => {
   if (!userId.value) return;
   mutate({
@@ -57,10 +69,16 @@ const handleCreateReservation = (): void => {
 
       <DialogFooter>
         <div className="flex gap-4">
-          <Button variant="ghost" @click="handleCreateReservation">
+          <Button
+            variant="ghost"
+            :disabled="isLoading"
+            @click="handleCreateReservation"
+          >
             Zarezerwuj
           </Button>
-          <Button @click="handleCloseModal">Anuluj</Button>
+          <Button @click="handleCloseModal" :disabled="isLoading"
+            >Anuluj</Button
+          >
         </div></DialogFooter
       >
     </DialogContent>

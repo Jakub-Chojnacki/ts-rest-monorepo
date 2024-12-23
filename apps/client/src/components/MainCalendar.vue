@@ -10,7 +10,7 @@ import apiClient from "@/api-client";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/store/AuthStore";
 import { EventType } from "api-contract";
-import { EventClickArg } from "@fullcalendar/core/index.js";
+import { CalendarOptions, EventClickArg } from "@fullcalendar/core/index.js";
 
 const emit = defineEmits(["selectEvent"]);
 const fullCalendar = ref<InstanceType<typeof FullCalendar> | null>(null);
@@ -26,6 +26,7 @@ const { data, isLoading } = apiClient.events.getMany.useQuery(
 );
 
 const handleEventClick = ({ event }: EventClickArg): void => {
+  if (event.extendedProps.isBooked) return;
   //For some reason there isn't a simple way to extract all of the event data so we have to merge it back manually
   const fullEvent: EventType = {
     id: event.id,
@@ -37,7 +38,7 @@ const handleEventClick = ({ event }: EventClickArg): void => {
   emit("selectEvent", fullEvent);
 };
 
-const calendarOptions = reactive({
+const calendarOptions = reactive<CalendarOptions>({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
   initialView: "dayGridMonth",
   locale: plLocale,
@@ -45,6 +46,10 @@ const calendarOptions = reactive({
     left: "prev,today,next",
     center: "title",
     right: "dayGridMonth,timeGridWeek,timeGridDay",
+  },
+  eventTimeFormat: {
+    hour: "2-digit",
+    minute: "2-digit",
   },
   eventClick: handleEventClick,
   events: data.value?.body || [],
@@ -70,10 +75,10 @@ onMounted(() => {
   >
     <template v-slot:eventContent="arg">
       <div
-        class="w-full"
-        :class="`${arg.event.extendedProps.isBooked ? 'bg-red-400' : 'bg-green-300'}`"
+        class="w-full h-full"
+        :class="`${arg.event.extendedProps.isBooked ? 'bg-red-400 cursor-not-allowed' : 'bg-green-300 cursor-pointer'}`"
       >
-        <b>{{ arg.timeText }}</b>
+        <b class="mr-1">{{ arg.timeText }}</b>
         <i>Blok treningowy</i>
       </div>
     </template>
