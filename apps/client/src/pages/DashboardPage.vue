@@ -26,6 +26,7 @@ const handleCloseModal = (): void => {
     <div class="h-fullNoHeader p-4">
       <MainCalendar @selectEvent="handleSelectEvent" />
       <ReservationModal
+        v-if="selectedEvent"
         :showModal="showModal"
         :selectedEvent="selectedEvent"
         :handleCloseModal="handleCloseModal"
