@@ -9,7 +9,10 @@ import interactionPlugin from "@fullcalendar/interaction";
 import apiClient from "@/api-client";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/store/AuthStore";
+import { EventType } from "api-contract";
+import { EventClickArg } from "@fullcalendar/core/index.js";
 
+const emit = defineEmits(["selectEvent"]);
 const fullCalendar = ref<InstanceType<typeof FullCalendar> | null>(null);
 let calApi = null;
 
@@ -22,6 +25,18 @@ const { data, isLoading } = apiClient.events.getMany.useQuery(
   })
 );
 
+const handleEventClick = ({ event }: EventClickArg): void => {
+  //For some reason there isn't a simple way to extract all of the event data so we have to merge it back manually
+  const fullEvent: EventType = {
+    id: event.id,
+    title: event.title,
+    start: event.start as Date, //It must be present, otherwise the event wouldn't be displayed
+    end: event.end as Date,
+    isBooked: event.extendedProps.isBooked,
+  };
+  emit("selectEvent", fullEvent);
+};
+
 const calendarOptions = reactive({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
   initialView: "dayGridMonth",
@@ -31,6 +46,7 @@ const calendarOptions = reactive({
     center: "title",
     right: "dayGridMonth,timeGridWeek,timeGridDay",
   },
+  eventClick: handleEventClick,
   events: data.value?.body || [],
 });
 

@@ -21,16 +21,15 @@ import CardTitle from "@/components/ui/card/CardTitle.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
 import apiClient from "@/api-client";
 import { toast } from "vue-sonner";
+import { stringRequiredMinCharacters } from "@/schemas/schema-utils";
 
 const router = useRouter();
 const { handleLogin } = useAuthStore();
 
 const formSchema = toTypedSchema(
   z.object({
-    username: z.string(),
-    password: z
-      .string()
-      .min(6, { message: "Hasło musi być dłuższe niż 5 znaków" }),
+    username: stringRequiredMinCharacters("Nazwa użytkownika", 6),
+    password: stringRequiredMinCharacters("Hasło", 6),
   })
 );
 
@@ -43,9 +42,9 @@ const { mutate } = apiClient.login.useMutation({
     toast.success(
       "Udało się zalogować. Zostaniesz przeniesiony/a do ekranu głównego!"
     );
-    handleLogin(body.access_token);
+    handleLogin(body);
     form.handleReset();
-    router.push("/dashboard"); 
+    router.push("/dashboard");
   },
   onError: () => {
     toast.error("Wystąpił błąd podczas logowania!");
@@ -66,11 +65,7 @@ const onSubmit = form.handleSubmit((values) => mutate({ body: values }));
           <FormItem>
             <FormLabel>Nazwa użytkownika</FormLabel>
             <FormControl>
-              <Input
-                type="text"
-                placeholder="Nazwa użytkownika"
-                v-bind="componentField"
-              />
+              <Input type="text" placeholder="Nazwa użytkownika" v-bind="componentField" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -79,11 +74,7 @@ const onSubmit = form.handleSubmit((values) => mutate({ body: values }));
           <FormItem>
             <FormLabel>Hasło</FormLabel>
             <FormControl>
-              <Input
-                type="password"
-                placeholder="******"
-                v-bind="componentField"
-              />
+              <Input type="password" placeholder="******" v-bind="componentField" />
             </FormControl>
             <FormMessage />
           </FormItem>

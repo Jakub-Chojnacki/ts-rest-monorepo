@@ -21,6 +21,7 @@ import CardHeader from "@/components/ui/card/CardHeader.vue";
 import CardTitle from "@/components/ui/card/CardTitle.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
 import apiClient from "@/api-client";
+import { stringRequiredMinCharacters } from "@/schemas/schema-utils";
 
 const router = useRouter();
 const { handleLogin } = useAuthStore();
@@ -28,14 +29,12 @@ const { handleLogin } = useAuthStore();
 const formSchema = toTypedSchema(
   z.object({
     email: z
-      .string()
+      .string({
+        required_error: "Pole nie może być puste",
+      })
       .email({ message: "Wpisana wartość nie jest poprawnym adresem email" }),
-    username: z
-      .string()
-      .min(6, { message: "Nazwa użytkownika musi mieć minimum 6 znaków" }),
-    password: z
-      .string()
-      .min(6, { message: "Hasło musi miec minimum 6 znaków" }),
+    username: stringRequiredMinCharacters("Nazwa użytkownika", 6),
+    password: stringRequiredMinCharacters("Hasło", 6),
   })
 );
 
@@ -48,7 +47,10 @@ const { mutate } = apiClient.signup.useMutation({
     toast.success(
       "Udało się zarejestrować. Zostaniesz przeniesiony/a do ekranu głównego!"
     );
-    handleLogin(body.access_token);
+    handleLogin({
+      access_token: body.access_token,
+      userId: body.id,
+    });
 
     form.handleReset();
     router.push("/dashboard");
