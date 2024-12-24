@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { router } from "@/lib/router";
 
 export const useAuthStore = defineStore("auth", () => {
   //This entire store will be refactored when refresh tokens are added
@@ -10,6 +11,10 @@ export const useAuthStore = defineStore("auth", () => {
   const authHeader = ref(
     accessToken.value ? { Authorization: `Bearer ${accessToken.value}` } : {}
   );
+
+  watch(accessToken, () => {
+    authHeader.value = { Authorization: `Bearer ${accessToken.value}` };
+  });
 
   const handleLogin = ({
     access_token: token,
@@ -25,6 +30,7 @@ export const useAuthStore = defineStore("auth", () => {
   const handleLogout = (): void => {
     accessToken.value = "";
     userId.value = "";
+    router.push("/login");
   };
 
   return {

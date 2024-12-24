@@ -11,6 +11,7 @@ import {
 import {
   ReservationParamsSchema,
   ReservationSchema,
+  ReservationSchemaWithEvent,
 } from "./schemas/reservations";
 import { ScheduleSchema, ScheduleSchemaPost } from "./schemas/schedules";
 
@@ -112,7 +113,7 @@ export const contract = c.router(
         method: "GET",
         path: "/reservations/user/:userId",
         responses: {
-          200: z.array(ReservationSchema),
+          200: z.array(ReservationSchemaWithEvent),
         },
       },
       findAll: {

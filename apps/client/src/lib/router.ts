@@ -1,14 +1,20 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { pinia } from "@/lib/pinia";
 
-import HomePage from "@/pages/HomePage.vue";
+import { useAuthStore } from "@/store/AuthStore";
+
 import LoginPage from "@/pages/LoginPage.vue";
 import SignupPage from "@/pages/SignupPage.vue";
 import DashboardPage from "@/pages/DashboardPage.vue";
-import { useAuthStore } from "@/store/AuthStore";
-import { pinia } from "@/lib/pinia";
+import ReservationsPage from "@/pages/ReservationsPage.vue";
 
 const routes = [
-  { path: "/", component: HomePage, name: "home" },
+  {
+    path: "/",
+    redirect: () => {
+      return { path: "/dashboard" };
+    },
+  },
   {
     path: "/login",
     component: LoginPage,
@@ -29,6 +35,14 @@ const routes = [
     path: "/dashboard",
     component: DashboardPage,
     name: "dashboard",
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/reservations",
+    component: ReservationsPage,
+    name: "reservations",
     meta: {
       requiresAuth: true,
     },

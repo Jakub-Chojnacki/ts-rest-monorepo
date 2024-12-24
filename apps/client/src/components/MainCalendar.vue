@@ -67,20 +67,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <FullCalendar
-    class="max-h-[100%]"
-    ref="fullCalendar"
-    :options="calendarOptions"
-    v-if="!isLoading"
-  >
+  <FullCalendar class="max-h-[100%]" ref="fullCalendar" :options="calendarOptions" v-if="!isLoading">
     <template v-slot:eventContent="arg">
-      <div
-        class="w-full h-full"
-        :class="`${arg.event.extendedProps.isBooked ? 'bg-red-400 cursor-not-allowed' : 'bg-green-300 cursor-pointer'}`"
-      >
+      <div class="w-full h-full"
+        :class="`${arg.event.extendedProps.isBooked ? 'bg-red-400 cursor-not-allowed' : 'bg-green-300 cursor-pointer'}`">
         <b class="mr-1">{{ arg.timeText }}</b>
         <i>Blok treningowy</i>
       </div>
     </template>
   </FullCalendar>
+  <div v-if="isLoading">
+   <Spinner />
+  </div>
 </template>
