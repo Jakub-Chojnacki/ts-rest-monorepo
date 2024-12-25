@@ -2,10 +2,9 @@
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useRouter } from "vue-router";
-import { toast } from "vue-sonner";
 import * as z from "zod";
 
-import { useAuthStore } from "@/store/AuthStore";
+import useSignup from "@/queries/useSignup";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,11 +19,9 @@ import Card from "@/components/ui/card/Card.vue";
 import CardHeader from "@/components/ui/card/CardHeader.vue";
 import CardTitle from "@/components/ui/card/CardTitle.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
-import apiClient from "@/api-client";
 import { stringRequiredMinCharacters } from "@/schemas/schema-utils";
 
 const router = useRouter();
-const { handleLogin } = useAuthStore();
 
 const formSchema = toTypedSchema(
   z.object({
@@ -42,25 +39,14 @@ const { isSubmitting, ...form } = useForm({
   validationSchema: formSchema,
 });
 
-const { mutate, error } = apiClient.signup.useMutation({
-  onSuccess: ({ body }) => {
-    toast.success(
-      "Udało się zarejestrować. Zostaniesz przeniesiony/a do ekranu głównego!"
-    );
-    handleLogin({
-      access_token: body.access_token,
-      userId: body.id,
-    });
+const { mutate, error } = useSignup()
 
+const onSubmit = form.handleSubmit((values) => mutate({ body: values }, {
+  onSuccess: () => {
     form.handleReset();
     router.push("/dashboard");
-  },
-  onError: () => {
-    toast.error("Wystąpił błąd podczas rejestracji!");
-  },
-});
-
-const onSubmit = form.handleSubmit((values) => mutate({ body: values }));
+  }
+}));
 </script>
 
 <template>

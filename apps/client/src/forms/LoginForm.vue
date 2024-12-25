@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
-import * as z from "zod";
 import { useRouter } from "vue-router";
+import * as z from "zod";
 
-import { useAuthStore } from "@/store/AuthStore";
+import useLogin from "@/queries/useLogin";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,12 +19,9 @@ import Card from "@/components/ui/card/Card.vue";
 import CardHeader from "@/components/ui/card/CardHeader.vue";
 import CardTitle from "@/components/ui/card/CardTitle.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
-import apiClient from "@/api-client";
-import { toast } from "vue-sonner";
 import { stringRequiredMinCharacters } from "@/schemas/schema-utils";
 
 const router = useRouter();
-const { handleLogin } = useAuthStore();
 
 const formSchema = toTypedSchema(
   z.object({
@@ -37,22 +34,14 @@ const { isSubmitting, ...form } = useForm({
   validationSchema: formSchema,
 });
 
-const { mutate, error } = apiClient.login.useMutation({
-  onSuccess: ({ body }) => {
-    toast.success(
-      "Udało się zalogować. Zostaniesz przeniesiony/a do ekranu głównego!"
-    );
-    handleLogin(body);
+const { mutate, error } = useLogin()
+
+const onSubmit = form.handleSubmit((values) => mutate({ body: values }, {
+  onSuccess: () => {
     form.handleReset();
     router.push("/dashboard");
-  },
-  onError: () => {
-    toast.error("Wystąpił błąd podczas logowania!");
-    //form.setFieldError('password', 'Wystąpił błąd podczas logowania. Upewnij się, że podane dane są poprawne i spróbuj ponownie.')
-  },
-});
-
-const onSubmit = form.handleSubmit((values) => mutate({ body: values }));
+  }
+}));
 </script>
 
 <template>

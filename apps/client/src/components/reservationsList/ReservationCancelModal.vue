@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { TReservationWithEvent } from "api-contract";
-import apiClient from "@/api-client";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/store/AuthStore";
 
@@ -15,8 +14,7 @@ import {
 import Button from "@/components/ui/button/Button.vue";
 
 import getReadableDate from "@/utils/getReadableDate";
-import { queryClient } from "@/lib/vue-query";
-import { toast } from "vue-sonner";
+import useCancelReservation from "@/queries/useCancelReservation";
 
 type TProps = {
   showModal: boolean;
@@ -29,24 +27,18 @@ const { showModal, handleCloseModal, selectedReservation } =
 
 const { authHeader } = storeToRefs(useAuthStore());
 
-const { mutate } = apiClient.reservations.cancel.useMutation({
-  onSuccess: () => {
-    queryClient.invalidateQueries(["allReservations"]);
-    handleCloseModal();
-  },
-  onError: () => {
-    toast.error(
-      "Wystąpił błąd poczas anulowania rezerwacji. Spróbuj ponownie."
-    );
-  },
-});
+const { mutate } = useCancelReservation()
 
 const handleCancelReservation = (): void => {
   mutate({
     params: {
       id: selectedReservation.id,
     },
-    extraHeaders: authHeader.value
+    extraHeaders: authHeader.value,
+  }, {
+    onSuccess: () => {
+      handleCloseModal();
+    }
   });
 };
 </script>

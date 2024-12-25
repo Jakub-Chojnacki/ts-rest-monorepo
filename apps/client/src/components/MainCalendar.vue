@@ -1,29 +1,21 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from "vue";
-
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import plLocale from "@fullcalendar/core/locales/pl";
 import interactionPlugin from "@fullcalendar/interaction";
-import apiClient from "@/api-client";
-import { storeToRefs } from "pinia";
-import { useAuthStore } from "@/store/AuthStore";
-import { EventType } from "api-contract";
 import { CalendarOptions, EventClickArg } from "@fullcalendar/core/index.js";
+import { EventType } from "api-contract";
+
+import useGetAllEvents from "@/queries/useGetAllEvents";
 
 const emit = defineEmits(["selectEvent"]);
 const fullCalendar = ref<InstanceType<typeof FullCalendar> | null>(null);
 let calApi = null;
 
-const { authHeader } = storeToRefs(useAuthStore());
 
-const { data, isLoading } = apiClient.events.getMany.useQuery(
-  ["allEvents"],
-  () => ({
-    extraHeaders: authHeader.value,
-  })
-);
+const { data, isLoading } = useGetAllEvents()
 
 const handleEventClick = ({ event }: EventClickArg): void => {
   if (event.extendedProps.isBooked) return;
@@ -77,6 +69,6 @@ onMounted(() => {
     </template>
   </FullCalendar>
   <div v-if="isLoading">
-   <Spinner />
+    <Spinner />
   </div>
 </template>

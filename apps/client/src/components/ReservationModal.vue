@@ -40,6 +40,7 @@ const { mutate, isLoading } = apiClient.reservations.create.useMutation({
     handleCloseModal();
   },
 });
+
 const handleCreateReservation = (): void => {
   if (!userId.value) return;
   mutate({
