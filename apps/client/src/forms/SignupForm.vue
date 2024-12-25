@@ -42,7 +42,7 @@ const { isSubmitting, ...form } = useForm({
   validationSchema: formSchema,
 });
 
-const { mutate } = apiClient.signup.useMutation({
+const { mutate, error } = apiClient.signup.useMutation({
   onSuccess: ({ body }) => {
     toast.success(
       "Udało się zarejestrować. Zostaniesz przeniesiony/a do ekranu głównego!"
@@ -74,11 +74,7 @@ const onSubmit = form.handleSubmit((values) => mutate({ body: values }));
           <FormItem>
             <FormLabel>Adres email</FormLabel>
             <FormControl>
-              <Input
-                type="text"
-                placeholder="Adres email"
-                v-bind="componentField"
-              />
+              <Input type="text" placeholder="Adres email" v-bind="componentField" />
             </FormControl>
           </FormItem>
         </FormField>
@@ -86,11 +82,7 @@ const onSubmit = form.handleSubmit((values) => mutate({ body: values }));
           <FormItem>
             <FormLabel>Nazwa użytkownika</FormLabel>
             <FormControl>
-              <Input
-                type="text"
-                placeholder="Nazwa użytkownika"
-                v-bind="componentField"
-              />
+              <Input type="text" placeholder="Nazwa użytkownika" v-bind="componentField" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -99,15 +91,13 @@ const onSubmit = form.handleSubmit((values) => mutate({ body: values }));
           <FormItem>
             <FormLabel>Hasło</FormLabel>
             <FormControl>
-              <Input
-                type="password"
-                placeholder="******"
-                v-bind="componentField"
-              />
+              <Input type="password" placeholder="******" v-bind="componentField" />
             </FormControl>
             <FormMessage />
           </FormItem>
         </FormField>
+        <div v-if="error" class="text-red-500 text-sm">Wystąpił błąd podczas rejestracji. Spróbuj ponownie.
+        </div>
         <Button type="submit" :disabled="isSubmitting">
           Zarejestruj się
         </Button>

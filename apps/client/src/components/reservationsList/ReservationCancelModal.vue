@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { TReservationWithEvent } from "api-contract";
 import apiClient from "@/api-client";
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "@/store/AuthStore";
 
 import {
   Dialog,
@@ -25,6 +27,8 @@ type TProps = {
 const { showModal, handleCloseModal, selectedReservation } =
   defineProps<TProps>();
 
+const { authHeader } = storeToRefs(useAuthStore());
+
 const { mutate } = apiClient.reservations.cancel.useMutation({
   onSuccess: () => {
     queryClient.invalidateQueries(["allReservations"]);
@@ -36,6 +40,15 @@ const { mutate } = apiClient.reservations.cancel.useMutation({
     );
   },
 });
+
+const handleCancelReservation = (): void => {
+  mutate({
+    params: {
+      id: selectedReservation.id,
+    },
+    extraHeaders: authHeader.value
+  });
+};
 </script>
 
 <template>
@@ -53,12 +66,12 @@ const { mutate } = apiClient.reservations.cancel.useMutation({
 
       <DialogFooter>
         <div className="flex gap-4">
-          <Button variant="destructive" @click="mutate">
+          <Button variant="destructive" @click="handleCancelReservation">
             Anuluj rezerwację
           </Button>
           <Button @click="handleCloseModal">Zamknij</Button>
-        </div></DialogFooter
-      >
+        </div>
+      </DialogFooter>
     </DialogContent>
   </Dialog>
 </template>

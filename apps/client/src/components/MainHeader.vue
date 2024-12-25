@@ -25,8 +25,8 @@ const handleNavigateToReservations = (): void => {
       </RouterLink>
     </div>
     <div class="flex gap-4 items-center ml-auto" v-if="accessToken">
-      <Button variant="ghost" @click="handleNavigateToReservations" type="button">Moje rezerwacje</Button>
-      <Button @click="handleLogout" variant="secondary" type="button">Wyloguj</Button>
+      <Button variant="ghost" type="button" @click="handleNavigateToReservations">Moje rezerwacje</Button>
+      <Button variant="secondary" type="button" @click="handleLogout">Wyloguj</Button>
     </div>
   </div>
 </template>

@@ -37,7 +37,7 @@ const { isSubmitting, ...form } = useForm({
   validationSchema: formSchema,
 });
 
-const { mutate } = apiClient.login.useMutation({
+const { mutate, error } = apiClient.login.useMutation({
   onSuccess: ({ body }) => {
     toast.success(
       "Udało się zalogować. Zostaniesz przeniesiony/a do ekranu głównego!"
@@ -48,6 +48,7 @@ const { mutate } = apiClient.login.useMutation({
   },
   onError: () => {
     toast.error("Wystąpił błąd podczas logowania!");
+    //form.setFieldError('password', 'Wystąpił błąd podczas logowania. Upewnij się, że podane dane są poprawne i spróbuj ponownie.')
   },
 });
 
@@ -79,6 +80,9 @@ const onSubmit = form.handleSubmit((values) => mutate({ body: values }));
             <FormMessage />
           </FormItem>
         </FormField>
+        <div v-if="error" class="text-red-500 text-sm">Wystąpił błąd podczas logowania. Upewnij się, że podane dane są
+          poprawne i spróbuj ponownie.
+        </div>
         <Button type="submit" :disabled="isSubmitting"> Zaloguj się </Button>
       </form>
     </CardContent>

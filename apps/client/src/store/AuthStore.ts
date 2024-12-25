@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
 import { ref, watch } from "vue";
 import { router } from "@/lib/router";
+import { toast } from "vue-sonner";
 
 export const useAuthStore = defineStore("auth", () => {
   //This entire store will be refactored when refresh tokens are added
@@ -31,6 +32,7 @@ export const useAuthStore = defineStore("auth", () => {
     accessToken.value = "";
     userId.value = "";
     router.push("/login");
+    toast.success("Zostałeś pomyślnie wylogowany/a!");
   };
 
   return {
