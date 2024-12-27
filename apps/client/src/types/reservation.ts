@@ -3,3 +3,10 @@ export const enum EStatus {
   CANCELLED = "anulowana",
   FINISHED = "zakończona",
 }
+
+export const enum EFilters {
+  ALL = "ALL",
+  UPCOMING = EStatus.UPCOMING,
+  FINISHED = EStatus.FINISHED,
+  CANCELLED = EStatus.CANCELLED,
+}

@@ -14,7 +14,7 @@ const handleNavigateToReservations = (): void => {
 </script>
 
 <template>
-  <div class="px-4 gap-2 bg-black text-white h-header flex items-center">
+  <div class="px-4 gap-2 bg-black text-white h-header flex items-center sticky z-10 top-0">
     <RouterLink to="/" class="font-bold">CodeFitness</RouterLink>
     <div class="flex gap-4 items-center ml-auto" v-if="!accessToken">
       <RouterLink to="/login">
@@ -30,5 +30,3 @@ const handleNavigateToReservations = (): void => {
     </div>
   </div>
 </template>
-
-<style scoped></style>

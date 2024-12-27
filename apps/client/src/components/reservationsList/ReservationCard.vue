@@ -9,14 +9,15 @@ import CardContent from "@/components/ui/card/CardContent.vue";
 import Button from "@/components/ui/button/Button.vue";
 import Badge from "@/components/ui/badge/Badge.vue";
 
-import { EStatus } from "@/types/reservation";
+import { EFilters, EStatus } from "@/types/reservation";
 import ReservationCancelModal from "./ReservationCancelModal.vue";
 
 type TProps = {
   reservation: TReservationWithEvent;
+  currentFilter: EFilters;
 };
 
-const { reservation } = defineProps<TProps>();
+const { reservation, currentFilter } = defineProps<TProps>();
 
 const showModal = ref(false);
 
@@ -40,7 +41,7 @@ const formattedReservation = computed(() => {
   };
 });
 
-const getBadgeVariant = (status: string) => {
+const getBadgeVariant = (status: EStatus) => {
   if (status === EStatus.UPCOMING) {
     return "outline";
   } else if (status === EStatus.FINISHED) {
@@ -57,27 +58,30 @@ const handleCloseModal = (): void => {
 const handleOpenModal = (): void => {
   showModal.value = true;
 };
+
+const showCard = computed(() => {
+  if (currentFilter === EFilters.ALL || formattedReservation.value.status === currentFilter as unknown as EStatus) {
+    return true;
+  }
+
+  return false
+
+})
+
+
 </script>
 
 <template>
-  <Card class="mx-auto flex-1 flex flex-col justify-center gap-4">
+  <Card v-if="showCard" class="mx-auto flex-1 flex flex-col justify-center gap-4">
     <CardContent class="flex gap-2 p-0 shadow-lg">
       <div class="p-2 min-w-64 flex flex-col">
-        <Badge
-          :variant="getBadgeVariant(formattedReservation.status)"
-          class="w-fit text-[0.625rem]"
-        >
+        <Badge :variant="getBadgeVariant(formattedReservation.status)" class="w-fit text-[0.625rem]">
           {{ formattedReservation.status.toUpperCase() }}
         </Badge>
         <div class="font-bold my-2">Trening Personalny</div>
         <div class="mt-auto">
-          <Button
-            variant="destructive"
-            size="sm"
-            @click="handleOpenModal"
-            :disabled="formattedReservation.status !== EStatus.UPCOMING"
-            >Anuluj rezerwację</Button
-          >
+          <Button variant="destructive" size="sm" @click="handleOpenModal"
+            :disabled="formattedReservation.status !== EStatus.UPCOMING">Anuluj rezerwację</Button>
         </div>
       </div>
       <div class="flex flex-col gap-2 border-l-2 py-4 px-12 items-center">
@@ -87,9 +91,6 @@ const handleOpenModal = (): void => {
       </div>
     </CardContent>
   </Card>
-  <ReservationCancelModal
-    :showModal="showModal"
-    :handleCloseModal="handleCloseModal"
-    :selected-reservation="reservation"
-  />
+  <ReservationCancelModal :showModal="showModal" :handleCloseModal="handleCloseModal"
+    :selected-reservation="reservation" />
 </template>

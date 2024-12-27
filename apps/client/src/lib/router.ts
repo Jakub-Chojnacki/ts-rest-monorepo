@@ -7,6 +7,7 @@ import LoginPage from "@/pages/LoginPage.vue";
 import SignupPage from "@/pages/SignupPage.vue";
 import DashboardPage from "@/pages/DashboardPage.vue";
 import ReservationsPage from "@/pages/ReservationsPage.vue";
+import AdminPage from "@/pages/AdminPage.vue";
 
 const routes = [
   {
@@ -45,6 +46,15 @@ const routes = [
     name: "reservations",
     meta: {
       requiresAuth: true,
+    },
+  },
+  {
+    path: "/admin-dashboard",
+    component: AdminPage,
+    name: "admin-dashboard",
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
     },
   },
 ];
