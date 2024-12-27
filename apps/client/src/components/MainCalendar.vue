@@ -14,11 +14,11 @@ const emit = defineEmits(["selectEvent"]);
 const fullCalendar = ref<InstanceType<typeof FullCalendar> | null>(null);
 let calApi = null;
 
-
-const { data, isLoading } = useGetAllEvents()
+const { data, isLoading } = useGetAllEvents();
 
 const handleEventClick = ({ event }: EventClickArg): void => {
-  if (event.extendedProps.isBooked) return;
+  if (event.extendedProps.isBooked || (event.start as Date) < new Date())
+    return;
   //For some reason there isn't a simple way to extract all of the event data so we have to merge it back manually
   const fullEvent: EventType = {
     id: event.id,
@@ -56,13 +56,32 @@ watch(data, () => {
 onMounted(() => {
   calApi = fullCalendar.value?.getApi();
 });
+
+const eventStatusStyles = (isBooked: boolean, start: Date): string => {
+  if (start < new Date()) {
+    return "bg-gray-300 cursor-not-allowed";
+  }
+
+  return isBooked
+    ? "bg-red-400 cursor-not-allowed"
+    : "bg-green-300 cursor-pointer";
+};
 </script>
 
 <template>
-  <FullCalendar class="max-h-[100%]" ref="fullCalendar" :options="calendarOptions" v-if="!isLoading">
+  <FullCalendar
+    class="max-h-[100%]"
+    ref="fullCalendar"
+    :options="calendarOptions"
+    v-if="!isLoading"
+  >
     <template v-slot:eventContent="arg">
-      <div class="w-full h-full"
-        :class="`${arg.event.extendedProps.isBooked ? 'bg-red-400 cursor-not-allowed' : 'bg-green-300 cursor-pointer'}`">
+      <div
+        class="w-full h-full"
+        :class="
+          eventStatusStyles(arg.event.extendedProps.isBooked, arg.event.start)
+        "
+      >
         <b class="mr-1">{{ arg.timeText }}</b>
         <i>Blok treningowy</i>
       </div>
