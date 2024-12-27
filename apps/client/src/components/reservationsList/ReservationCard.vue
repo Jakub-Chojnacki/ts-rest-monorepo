@@ -1,45 +1,21 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { TReservationWithEvent } from "api-contract";
-import { format } from "date-fns";
-import { pl } from "date-fns/locale";
+import { ref } from "vue";
 
 import Card from "@/components/ui/card/Card.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
 import Button from "@/components/ui/button/Button.vue";
 import Badge from "@/components/ui/badge/Badge.vue";
+import ReservationCancelModal from '@/components/reservationsList/ReservationCancelModal.vue'
 
-import { EFilters, EStatus } from "@/types/reservation";
-import ReservationCancelModal from "./ReservationCancelModal.vue";
+import { EStatus, TReservationWithStatus } from "@/types/reservation";
 
 type TProps = {
-  reservation: TReservationWithEvent;
-  currentFilter: EFilters;
+  reservation: TReservationWithStatus;
 };
 
-const { reservation, currentFilter } = defineProps<TProps>();
+const { reservation } = defineProps<TProps>();
 
 const showModal = ref(false);
-
-const formattedReservation = computed(() => {
-  const startDate = new Date(reservation.event.start);
-  const endDate = new Date(reservation.event.end);
-  let status = EStatus.UPCOMING;
-
-  if (reservation.isCancelled) {
-    status = EStatus.CANCELLED;
-  } else if (endDate < new Date()) {
-    status = EStatus.FINISHED;
-  }
-
-  return {
-    ...reservation,
-    month: format(startDate, "MMM", { locale: pl }),
-    day: format(startDate, "dd", { locale: pl }),
-    hour: format(startDate, "HH:mm", { locale: pl }),
-    status,
-  };
-});
 
 const getBadgeVariant = (status: EStatus) => {
   if (status === EStatus.UPCOMING) {
@@ -59,38 +35,39 @@ const handleOpenModal = (): void => {
   showModal.value = true;
 };
 
-const showCard = computed(() => {
-  if (currentFilter === EFilters.ALL || formattedReservation.value.status === currentFilter as unknown as EStatus) {
-    return true;
-  }
-
-  return false
-
-})
-
-
 </script>
 
 <template>
-  <Card v-if="showCard" class="mx-auto flex-1 flex flex-col justify-center gap-4">
+  <Card class="mx-auto flex-1 flex flex-col justify-center gap-4">
     <CardContent class="flex gap-2 p-0 shadow-lg">
       <div class="p-2 min-w-64 flex flex-col">
-        <Badge :variant="getBadgeVariant(formattedReservation.status)" class="w-fit text-[0.625rem]">
-          {{ formattedReservation.status.toUpperCase() }}
+        <Badge
+          :variant="getBadgeVariant(reservation.status)"
+          class="w-fit text-[0.625rem]"
+        >
+          {{ reservation.status.toUpperCase() }}
         </Badge>
         <div class="font-bold my-2">Trening Personalny</div>
         <div class="mt-auto">
-          <Button variant="destructive" size="sm" @click="handleOpenModal"
-            :disabled="formattedReservation.status !== EStatus.UPCOMING">Anuluj rezerwację</Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            @click="handleOpenModal"
+            :disabled="reservation.status !== EStatus.UPCOMING"
+            >Anuluj rezerwację</Button
+          >
         </div>
       </div>
       <div class="flex flex-col gap-2 border-l-2 py-4 px-12 items-center">
-        <div>{{ formattedReservation.month }}</div>
-        <div class="font-bold text-xl">{{ formattedReservation.day }}</div>
-        <div>{{ formattedReservation.hour }}</div>
+        <div>{{ reservation.month }}</div>
+        <div class="font-bold text-xl">{{ reservation.day }}</div>
+        <div>{{ reservation.hour }}</div>
       </div>
     </CardContent>
   </Card>
-  <ReservationCancelModal :showModal="showModal" :handleCloseModal="handleCloseModal"
-    :selected-reservation="reservation" />
+  <ReservationCancelModal
+    :showModal="showModal"
+    :handleCloseModal="handleCloseModal"
+    :selected-reservation="reservation"
+  />
 </template>

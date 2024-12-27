@@ -1,3 +1,5 @@
+import { TReservationWithEvent } from "api-contract";
+
 export const enum EStatus {
   UPCOMING = "nadchodząca",
   CANCELLED = "anulowana",
@@ -10,3 +12,10 @@ export const enum EFilters {
   FINISHED = EStatus.FINISHED,
   CANCELLED = EStatus.CANCELLED,
 }
+
+export type TReservationWithStatus = TReservationWithEvent & {
+  status: EStatus;
+  month: string;
+  day: string;
+  hour: string;
+};
