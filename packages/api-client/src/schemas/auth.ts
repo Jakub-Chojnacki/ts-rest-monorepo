@@ -25,3 +25,11 @@ export const SignupReturnSchema = z.object({
   id: z.string(),
   access_token: z.string(),
 });
+
+export const SignupReturnSchemaError = z.object({
+  error: z.string(),
+  message: z.string(),
+  statusCode: z.number(),
+});
+
+export type TSignupError = z.infer<typeof SignupReturnSchemaError>;

@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
+import { useForm } from "vee-validate";
+import { TSignupError } from "api-contract";
 import { useRouter } from "vue-router";
+import { computed } from "vue";
+
 import * as z from "zod";
 
 import useSignup from "@/queries/useSignup";
@@ -39,14 +42,34 @@ const { isSubmitting, ...form } = useForm({
   validationSchema: formSchema,
 });
 
-const { mutate, error } = useSignup()
+const { mutate, error } = useSignup();
 
-const onSubmit = form.handleSubmit((values) => mutate({ body: values }, {
-  onSuccess: () => {
-    form.handleReset();
-    router.push("/dashboard");
-  }
-}));
+const emailAlreadyExistsMessageBackend =
+  "User with this email or username already exists";
+const emailExistsMessage = "Użytkownik o podanym adresie email już istnieje";
+const signupUnknownErrorMessage =
+  "Wystąpił błąd podczas rejestracji. Spróbuj ponownie.";
+
+const singupErrorMessage = computed(() => {
+  const emailExists =
+    (error.value?.body as TSignupError)?.message ===
+    emailAlreadyExistsMessageBackend;
+  if (emailExists) return emailExistsMessage;
+
+  return signupUnknownErrorMessage;
+});
+
+const onSubmit = form.handleSubmit((values) =>
+  mutate(
+    { body: values },
+    {
+      onSuccess: () => {
+        form.handleReset();
+        router.push("/dashboard");
+      },
+    }
+  )
+);
 </script>
 
 <template>
@@ -60,7 +83,11 @@ const onSubmit = form.handleSubmit((values) => mutate({ body: values }, {
           <FormItem>
             <FormLabel>Adres email</FormLabel>
             <FormControl>
-              <Input type="text" placeholder="Adres email" v-bind="componentField" />
+              <Input
+                type="text"
+                placeholder="Adres email"
+                v-bind="componentField"
+              />
             </FormControl>
           </FormItem>
         </FormField>
@@ -68,7 +95,11 @@ const onSubmit = form.handleSubmit((values) => mutate({ body: values }, {
           <FormItem>
             <FormLabel>Nazwa użytkownika</FormLabel>
             <FormControl>
-              <Input type="text" placeholder="Nazwa użytkownika" v-bind="componentField" />
+              <Input
+                type="text"
+                placeholder="Nazwa użytkownika"
+                v-bind="componentField"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -77,12 +108,17 @@ const onSubmit = form.handleSubmit((values) => mutate({ body: values }, {
           <FormItem>
             <FormLabel>Hasło</FormLabel>
             <FormControl>
-              <Input type="password" placeholder="******" v-bind="componentField" />
+              <Input
+                type="password"
+                placeholder="******"
+                v-bind="componentField"
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
         </FormField>
-        <div v-if="error" class="text-red-500 text-sm">Wystąpił błąd podczas rejestracji. Spróbuj ponownie.
+        <div v-if="error" class="text-red-500 text-sm">
+          {{ singupErrorMessage }}
         </div>
         <Button type="submit" :disabled="isSubmitting">
           Zarejestruj się

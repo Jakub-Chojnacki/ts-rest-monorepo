@@ -6,6 +6,7 @@ import {
   LoginReturnSchema,
   LoginSchema,
   SignupReturnSchema,
+  SignupReturnSchemaError,
   SignupSchema,
 } from "./schemas/auth";
 import {
@@ -167,6 +168,7 @@ export const contract = c.router(
       body: SignupSchema,
       responses: {
         201: SignupReturnSchema,
+        400: SignupReturnSchemaError,
       },
     },
   },
