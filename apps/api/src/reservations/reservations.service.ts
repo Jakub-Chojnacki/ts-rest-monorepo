@@ -129,6 +129,11 @@ export class ReservationsService {
         where: {
           userId,
         },
+        orderBy: {
+          event: {
+            start: 'asc',
+          },
+        },
         include: {
           event: true,
         },
