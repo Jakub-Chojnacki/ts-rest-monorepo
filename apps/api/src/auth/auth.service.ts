@@ -58,6 +58,22 @@ export class AuthService {
     }
   }
 
+  async getUserFromToken(token: string) {
+    try {
+      const decoded = this.jwtService.verify(token);
+      const user = await this.usersService.findOne(decoded.username);
+
+      return {
+        userId: user.id,
+        username: user.username,
+        role: user.role,
+      };
+      
+    } catch (e) {
+      throw new UnauthorizedException('Invalid token');
+    }
+  }
+
   async comparePassword(password: string, hash: string) {
     return await bcrypt.compare(password, hash);
   }

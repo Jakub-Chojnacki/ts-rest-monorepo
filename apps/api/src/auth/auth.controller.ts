@@ -31,12 +31,26 @@ export class AuthController {
         ...body,
         password: hashedPassword,
       };
-      
+
       const newUser = await this.authService.signup(userData);
 
       return {
         status: 201,
         body: newUser,
+      };
+    });
+  }
+
+  @TsRestHandler(contract.auth)
+  async authMeHandler() {
+    return tsRestHandler(contract.auth, async ({ headers }) => {
+      const token = headers.authorization.split(' ')[1];
+
+      const userData = await this.authService.getUserFromToken(token);
+
+      return {
+        status: 200,
+        body: userData,
       };
     });
   }

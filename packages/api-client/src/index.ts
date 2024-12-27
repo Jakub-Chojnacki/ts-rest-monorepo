@@ -8,6 +8,7 @@ import {
   SignupReturnSchema,
   SignupReturnSchemaError,
   SignupSchema,
+  UserAuthMeSchema,
 } from "./schemas/auth";
 import {
   ReservationParamsSchema,
@@ -15,6 +16,7 @@ import {
   ReservationSchemaWithEvent,
 } from "./schemas/reservations";
 import { ScheduleSchema, ScheduleSchemaPost } from "./schemas/schedules";
+import { UnauthorizedSchema } from "./schemas/utils";
 
 const c = initContract();
 
@@ -169,6 +171,14 @@ export const contract = c.router(
       responses: {
         201: SignupReturnSchema,
         400: SignupReturnSchemaError,
+      },
+    },
+    auth: {
+      method: "GET",
+      path: "/auth/me",
+      responses: {
+        200: UserAuthMeSchema,
+        401: UnauthorizedSchema,
       },
     },
   },

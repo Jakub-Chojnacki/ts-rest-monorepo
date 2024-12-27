@@ -4,11 +4,11 @@ import apiClient from "@/api-client";
 
 import { useAuthStore } from "@/store/AuthStore";
 
-const useGetUserReservations = () => {
+const useGetAdminReservations = () => {
   const { authHeader, userId } = storeToRefs(useAuthStore());
 
-  const query = apiClient.reservations.findUserReservations.useQuery(
-    ["allReservations", userId.value],
+  const query = apiClient.reservations.findAll.useQuery(
+    ["allAdminReservations"],
     () => ({
       extraHeaders: authHeader.value,
       params: {
@@ -20,4 +20,4 @@ const useGetUserReservations = () => {
   return query;
 };
 
-export default useGetUserReservations;
+export default useGetAdminReservations;

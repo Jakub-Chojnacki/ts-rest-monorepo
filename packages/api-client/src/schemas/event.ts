@@ -10,5 +10,4 @@ export const EventSchema = z.object({
   updatedAt: z.date().optional(),
 });
 
-
 export type EventType = z.infer<typeof EventSchema>

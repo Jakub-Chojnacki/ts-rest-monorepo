@@ -4,20 +4,18 @@ import apiClient from "@/api-client";
 
 import { useAuthStore } from "@/store/AuthStore";
 
-const useGetUserReservations = () => {
+const useAuthMe = () => {
   const { authHeader, userId } = storeToRefs(useAuthStore());
 
-  const query = apiClient.reservations.findUserReservations.useQuery(
-    ["allReservations", userId.value],
+  const query = apiClient.auth.useQuery(
+    ["user", userId],
     () => ({
       extraHeaders: authHeader.value,
-      params: {
-        userId: userId.value,
-      },
-    })
+    }),
+    { enabled: !!authHeader.value }
   );
 
   return query;
 };
 
-export default useGetUserReservations;
+export default useAuthMe;

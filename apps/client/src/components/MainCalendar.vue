@@ -12,7 +12,7 @@ import useGetAllEvents from "@/queries/useGetAllEvents";
 
 const emit = defineEmits(["selectEvent"]);
 const fullCalendar = ref<InstanceType<typeof FullCalendar> | null>(null);
-let calApi = null;
+let calendarApi = null;
 
 const { data, isLoading } = useGetAllEvents();
 
@@ -27,6 +27,7 @@ const handleEventClick = ({ event }: EventClickArg): void => {
     end: event.end as Date,
     isBooked: event.extendedProps.isBooked,
   };
+
   emit("selectEvent", fullEvent);
 };
 
@@ -53,10 +54,6 @@ watch(data, () => {
   }
 });
 
-onMounted(() => {
-  calApi = fullCalendar.value?.getApi();
-});
-
 const eventStatusStyles = (isBooked: boolean, start: Date): string => {
   if (start < new Date()) {
     return "bg-gray-300 cursor-not-allowed";
@@ -66,6 +63,10 @@ const eventStatusStyles = (isBooked: boolean, start: Date): string => {
     ? "bg-red-400 cursor-not-allowed"
     : "bg-green-300 cursor-pointer";
 };
+
+onMounted(() => {
+  calendarApi = fullCalendar.value?.getApi();
+});
 </script>
 
 <template>

@@ -33,3 +33,9 @@ export const SignupReturnSchemaError = z.object({
 });
 
 export type TSignupError = z.infer<typeof SignupReturnSchemaError>;
+
+export const UserAuthMeSchema = z.object({
+  userId: z.string(),
+  username: z.string(),
+  role: z.enum(["ADMIN", "USER"]),
+});
