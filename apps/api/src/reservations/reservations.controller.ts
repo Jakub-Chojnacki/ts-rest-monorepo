@@ -63,9 +63,11 @@ export class ReservationsController {
           body: userReservations,
         };
       },
-      findAll: async ({ query: { isCancelled } }) => {
-        const reservations =
-          await this.reservationsService.findAll(isCancelled);
+      findAll: async ({ query: { isCancelled, isUpcoming } }) => {
+        const reservations = await this.reservationsService.findAll({
+          isCancelled,
+          isUpcoming,
+        });
 
         return {
           status: 200,

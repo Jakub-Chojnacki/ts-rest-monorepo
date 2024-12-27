@@ -1,5 +1,12 @@
 import z from "zod";
 
+export const UserSchema = z.object({
+  id: z.string(),
+  username: z.string(),
+  email: z.string(),
+  role: z.enum(["ADMIN", "USER"]),
+})
+
 export const LoginSchema = z.object({
   username: z.string(),
   password: z.string(),

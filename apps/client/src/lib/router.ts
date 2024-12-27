@@ -8,6 +8,8 @@ import SignupPage from "@/pages/SignupPage.vue";
 import DashboardPage from "@/pages/DashboardPage.vue";
 import ReservationsPage from "@/pages/ReservationsPage.vue";
 import AdminPage from "@/pages/AdminPage.vue";
+import AdminSchedule from "@/components/adminPanel/AdminSchedule.vue";
+import AdminReservations from "@/components/adminPanel/AdminReservations.vue";
 
 const routes = [
   {
@@ -56,6 +58,18 @@ const routes = [
       requiresAuth: true,
       requiresAdmin: true,
     },
+    children: [
+      {
+        path: "reservations",
+        component: AdminReservations,
+        name: "admin-reservations",
+      },
+      {
+        path: "schedule",
+        component: AdminSchedule,
+        name: "admin-schedule",
+      },
+    ],
   },
 ];
 

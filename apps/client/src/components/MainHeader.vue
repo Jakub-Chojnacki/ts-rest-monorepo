@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { RouterLink, useRouter } from "vue-router";
-import { watch } from "vue";
-import Button from "@/components/ui/button/Button.vue";
-import { storeToRefs } from "pinia";
+import { storeToRefs } from "pinia"
+
 import { useAuthStore } from "@/store/AuthStore";
+;
 import useAuthMe from "@/queries/useAuthMe";
+
+import Button from "@/components/ui/button/Button.vue";
 
 const { accessToken } = storeToRefs(useAuthStore());
 const { handleLogout } = useAuthStore();
@@ -15,20 +17,14 @@ const handleNavigateToReservations = (): void => {
 };
 
 const handleNavigateToAdminDashboard = (): void => {
-  router.push("/admin-dashboard");
+  router.push("/admin-dashboard/reservations");
 };
 
 const { data } = useAuthMe();
-
-watch(data, () => {
-  console.log(data.value);
-});
 </script>
 
 <template>
-  <div
-    class="px-4 gap-2 bg-black text-white h-header flex items-center sticky z-10 top-0"
-  >
+  <div class="px-4 gap-2 bg-black text-white h-header flex items-center sticky z-10 top-0">
     <RouterLink to="/" class="font-bold">CodeFitness</RouterLink>
     <div class="flex gap-4 items-center ml-auto" v-if="!accessToken">
       <RouterLink to="/login">
@@ -39,23 +35,11 @@ watch(data, () => {
       </RouterLink>
     </div>
     <div class="flex gap-4 items-center ml-auto" v-if="accessToken">
-      <Button
-        v-if="data?.body?.role === 'USER'"
-        variant="ghost"
-        type="button"
-        @click="handleNavigateToReservations"
-        >Moje rezerwacje</Button
-      >
-      <Button
-        v-if="data?.body?.role === 'ADMIN'"
-        variant="ghost"
-        type="button"
-        @click="handleNavigateToAdminDashboard"
-        >Panel admina</Button
-      >
-      <Button variant="secondary" type="button" @click="handleLogout"
-        >Wyloguj</Button
-      >
+      <Button v-if="data?.body?.role === 'USER'" variant="ghost" type="button"
+        @click="handleNavigateToReservations">Moje rezerwacje</Button>
+      <Button v-if="data?.body?.role === 'ADMIN'" variant="ghost" type="button"
+        @click="handleNavigateToAdminDashboard">Panel admina</Button>
+      <Button variant="secondary" type="button" @click="handleLogout">Wyloguj</Button>
     </div>
   </div>
 </template>

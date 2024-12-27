@@ -50,7 +50,13 @@ export class ReservationsService {
     }
   }
 
-  async findAll(isCancelled: boolean = false) {
+  async findAll({
+    isCancelled,
+    isUpcoming,
+  }: {
+    isCancelled?: string;
+    isUpcoming?: string;
+  }) {
     try {
       const reservations = await this.prisma.reservation.findMany({
         include: {
@@ -58,7 +64,21 @@ export class ReservationsService {
           event: true,
         },
         where: {
-          isCancelled: isCancelled,
+          ...(isCancelled === 'true' && {
+            isCancelled: true,
+          }),
+          ...(isUpcoming === 'true' && {
+            event: {
+              start: {
+                gt: new Date(),
+              },
+            },
+          }),
+        },
+        orderBy: {
+          event: {
+            start: 'asc',
+          },
         },
       });
 

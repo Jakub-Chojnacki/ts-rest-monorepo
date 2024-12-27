@@ -7,7 +7,7 @@ export const enum EStatus {
 }
 
 export const enum EFilters {
-  ALL = "ALL",
+  ALL = "wszystkie",
   UPCOMING = EStatus.UPCOMING,
   FINISHED = EStatus.FINISHED,
   CANCELLED = EStatus.CANCELLED,

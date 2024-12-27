@@ -1,18 +1,28 @@
 import { storeToRefs } from "pinia";
+import { ComputedRef } from "vue";
 
 import apiClient from "@/api-client";
 
 import { useAuthStore } from "@/store/AuthStore";
 
-const useGetAdminReservations = () => {
-  const { authHeader, userId } = storeToRefs(useAuthStore());
+type TUseGetAdminReservationsProps = {
+  isCancelled?: ComputedRef<boolean>;
+  isUpcoming?: ComputedRef<boolean>;
+};
+
+const useGetAdminReservations = ({
+  isCancelled,
+  isUpcoming,
+}: TUseGetAdminReservationsProps) => {
+  const { authHeader } = storeToRefs(useAuthStore());
 
   const query = apiClient.reservations.findAll.useQuery(
-    ["allAdminReservations"],
+    ["allAdminReservations", { isCancelled }, { isUpcoming }],
     () => ({
       extraHeaders: authHeader.value,
-      params: {
-        userId: userId.value,
+      query: {
+        isCancelled: String(isCancelled?.value),
+        isUpcoming: String(isUpcoming?.value),
       },
     })
   );
