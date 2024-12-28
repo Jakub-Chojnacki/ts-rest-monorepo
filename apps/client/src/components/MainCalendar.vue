@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from "vue";
+import { reactive, ref, watch } from "vue";
 import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -12,7 +12,6 @@ import useGetAllEvents from "@/queries/useGetAllEvents";
 
 const emit = defineEmits(["selectEvent"]);
 const fullCalendar = ref<InstanceType<typeof FullCalendar> | null>(null);
-let calendarApi = null;
 
 const { data, isLoading } = useGetAllEvents();
 
@@ -63,10 +62,6 @@ const eventStatusStyles = (isBooked: boolean, start: Date): string => {
     ? "bg-red-400 cursor-not-allowed"
     : "bg-green-300 cursor-pointer";
 };
-
-onMounted(() => {
-  calendarApi = fullCalendar.value?.getApi();
-});
 </script>
 
 <template>

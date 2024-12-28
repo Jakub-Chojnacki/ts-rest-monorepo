@@ -15,6 +15,14 @@ export class SchedulesController {
   @TsRestHandler(contract.schedules)
   async handler() {
     return tsRestHandler(contract.schedules, {
+      findAll: async ({ params: { userId } }) => {
+        const schedule = await this.schedulesService.getUserSchedule(userId);
+
+        return {
+          status: 200,
+          body: schedule,
+        };
+      },
       create: async ({ body }) => {
         const newSchedule = await this.schedulesService.create(body);
 

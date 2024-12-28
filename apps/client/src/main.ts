@@ -8,6 +8,7 @@ import { router } from "@/lib/router";
 import { queryClient } from "@/lib/vue-query";
 
 import "./assets/index.css";
+import '@vuepic/vue-datepicker/dist/main.css'
 
 createApp(App)
   .use(pinia)

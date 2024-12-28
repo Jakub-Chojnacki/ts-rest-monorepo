@@ -10,11 +10,11 @@ const daysOfWeek = z.enum([
   "SUNDAY",
 ]);
 
-const DailyTimingSchema = z.object({
+export const DailyTimingSchema = z.object({
   id: z.string(),
   dayOfWeek: daysOfWeek,
-  start: z.date(),
-  end: z.date(),
+  start: z.string(),
+  end: z.string(),
   scheduleId: z.string(),
 });
 

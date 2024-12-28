@@ -44,7 +44,7 @@ export class AuthController {
   @TsRestHandler(contract.auth)
   async authMeHandler() {
     return tsRestHandler(contract.auth, async ({ headers }) => {
-      const token = headers.authorization.split(' ')[1];
+      const token = headers.authorization?.split(' ')?.[1];
 
       const userData = await this.authService.getUserFromToken(token);
 

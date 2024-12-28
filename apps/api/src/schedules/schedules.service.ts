@@ -23,6 +23,20 @@ type TSchedule = z.infer<typeof contract.schedules.create.body>;
 @Injectable()
 export class SchedulesService {
   constructor(private prisma: PrismaService) {}
+
+  async getUserSchedule(userId: string) {
+    try {
+      const schedule = await this.prisma.schedule.findFirst({
+        where: { userId },
+        include: { dailyTimings: true },
+      });
+
+      return schedule;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to fetch schedule');
+    }
+  }
+
   async create(schedule: Omit<TSchedule, 'id'>) {
     try {
       const result = await this.prisma.$transaction(async (prisma) => {

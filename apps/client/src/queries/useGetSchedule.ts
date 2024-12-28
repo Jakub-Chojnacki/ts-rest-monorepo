@@ -4,17 +4,23 @@ import apiClient from "@/api-client";
 
 import { useAuthStore } from "@/store/AuthStore";
 
-const useAuthMe = () => {
+const useGetSchedule = () => {
   const { authHeader, userId } = storeToRefs(useAuthStore());
-  const query = apiClient.auth.useQuery(
-    ["user", userId],
+
+  const query = apiClient.schedules.findAll.useQuery(
+    ["schedules", userId.value],
     () => ({
       extraHeaders: authHeader.value,
+      params: {
+        userId: userId.value,
+      },
     }),
-    { enabled: !!authHeader.value }
+    {
+      enabled: !!userId.value && !!authHeader.value,
+    }
   );
 
   return query;
 };
 
-export default useAuthMe;
+export default useGetSchedule;

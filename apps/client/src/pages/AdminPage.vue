@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
+
 import AdminSidebar from '@/components/adminPanel/AdminSidebar.vue';
 import MainLayout from '@/components/MainLayout.vue';
 </script>

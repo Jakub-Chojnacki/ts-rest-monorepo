@@ -16,7 +16,11 @@ import {
   ReservationSchemaWithEvent,
   ReservationSchemaWithEventAndUser,
 } from "./schemas/reservations";
-import { ScheduleSchema, ScheduleSchemaPost } from "./schemas/schedules";
+import {
+  DailyTimingSchema,
+  ScheduleSchema,
+  ScheduleSchemaPost,
+} from "./schemas/schedules";
 import { UnauthorizedSchema } from "./schemas/utils";
 
 const c = initContract();
@@ -156,6 +160,35 @@ export const contract = c.router(
           201: z.array(EventSchema),
         },
       },
+      findAll: {
+        method: "GET",
+        path: "/schedules/:userId/",
+        responses: {
+          200: ScheduleSchema,
+        },
+      },
+      deleteTiming: {
+        method: "DELETE",
+        path: "/schedules/:timingId",
+        responses: {
+          200: DailyTimingSchema,
+        },
+      },
+      editTiming:{
+        method: "PUT",
+        path: "/schedules/:timingId",
+        body: DailyTimingSchema,
+        responses: {
+          200: DailyTimingSchema,
+        },
+      },
+      createTiming:{
+        method: "POST",
+        path: "/schedules/:scheduleId/timings",
+        body: DailyTimingSchema,
+        responses: {
+          201: DailyTimingSchema,
+      }
     },
     login: {
       method: "POST",
