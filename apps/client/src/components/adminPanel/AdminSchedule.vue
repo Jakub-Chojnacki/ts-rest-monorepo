@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, type Ref } from "vue";
+import type { DateRange } from "radix-vue";
+import { RangeCalendar } from "@/components/ui/range-calendar";
+import { getLocalTimeZone, today } from "@internationalized/date";
+import { eachDayOfInterval, format } from "date-fns";
 
 import useGetSchedule from "@/queries/useGetSchedule";
 
 import ScheduleTimer from "./ScheduleTimer.vue";
+import Button from "@/components/ui/button/Button.vue";
 
 import { TDayOfWeek, EDaysOfWeek } from "@/types/admin";
 
@@ -52,6 +57,30 @@ const daysWithTimings = computed(() => {
     };
   });
 });
+
+const start = today(getLocalTimeZone());
+const end = start.add({ days: 7 });
+
+const selectedDates = ref({
+  start,
+  end,
+}) as Ref<DateRange>;
+
+const getDateFromSelectedDates = (date: DateRange["start"]) => {
+  return `${date?.year}-${date?.month}-${date?.day}`;
+};
+const handleGenerateEvents = (): string[] => {
+  const { start, end } = selectedDates.value;
+
+  const startDate = getDateFromSelectedDates(start);
+  const endDate = getDateFromSelectedDates(end);
+
+  const days = eachDayOfInterval({ start: startDate, end: endDate });
+
+  const mappedDays = days.map((day) => format(day, "yyyy-MM-dd"));
+
+  return mappedDays;
+};
 </script>
 
 <template>
@@ -59,6 +88,10 @@ const daysWithTimings = computed(() => {
     <div v-if="!isLoading && data?.body">
       <div v-for="day in daysWithTimings" :key="day.day">
         <ScheduleTimer :day="day" :scheduleId="data?.body.id" />
+      </div>
+      <div class="mt-4 w-fit">
+        <RangeCalendar v-model="selectedDates" class="rounded-md border" />
+        <Button @click="handleGenerateEvents">Wygeneruj</Button>
       </div>
     </div>
     <div v-if="isLoading">
