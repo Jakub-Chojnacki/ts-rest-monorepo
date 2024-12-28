@@ -143,9 +143,9 @@ export const contract = c.router(
         },
       },
       edit: {
-        method: "PUT",
+        method: "PATCH",
         path: "/schedules/:id",
-        body: ScheduleSchema.omit({ id: true }),
+        body: ScheduleSchema.omit({ id: true }).partial(),
         responses: {
           200: ScheduleSchema,
         },

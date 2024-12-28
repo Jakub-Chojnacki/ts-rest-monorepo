@@ -13,6 +13,7 @@ import useGenerateEvents from "@/queries/useGenerateEvents";
 
 import ScheduleTimer from "./ScheduleTimer.vue";
 import Button from "@/components/ui/button/Button.vue";
+import AdminScheduleDurationForm from "@/forms/AdminScheduleDurationForm.vue";
 
 import { TDayOfWeek, EDaysOfWeek } from "@/types/admin";
 
@@ -106,9 +107,15 @@ const handleGenerateEvents = () => {
       <div v-for="day in daysWithTimings" :key="day.day">
         <ScheduleTimer :day="day" :scheduleId="data?.body.id" />
       </div>
-      <div class="mt-4 w-fit">
-        <RangeCalendar v-model="selectedDates" class="rounded-md border" />
-        <Button @click="handleGenerateEvents">Wygeneruj</Button>
+      <div class="mt-4 flex gap-4">
+        <div class="w-fit">
+          <RangeCalendar v-model="selectedDates" class="rounded-md border" />
+          <Button @click="handleGenerateEvents" type="button">Wygeneruj</Button>
+        </div>
+        <AdminScheduleDurationForm
+          :scheduleId="data?.body.id"
+          :initial-event-duration="data?.body.eventDuration / 60"
+        />
       </div>
     </div>
     <div v-if="isLoading">
