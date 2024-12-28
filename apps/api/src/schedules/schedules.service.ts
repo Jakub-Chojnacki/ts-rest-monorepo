@@ -226,7 +226,7 @@ export class SchedulesService {
       );
 
       if (!dailyTiming) {
-        throw new BadRequestException('No schedule was found for this date');
+        return []
       }
 
       const start = this.combineDateWithScheduleTime(
@@ -277,6 +277,23 @@ export class SchedulesService {
       });
 
       return events;
+    } catch (err) {
+      throw new InternalServerErrorException(err);
+    }
+  }
+
+  async generateEventsForMultipleDays(scheduleId: string, dates: string[]) {
+    try {
+      const events = await Promise.all(
+        dates.map(async (date) => {
+          return await this.generateEventsForSingleDay(
+            scheduleId,
+            new Date(date),
+          );
+        }),
+      );
+
+      return events.flat();
     } catch (err) {
       throw new InternalServerErrorException(err);
     }

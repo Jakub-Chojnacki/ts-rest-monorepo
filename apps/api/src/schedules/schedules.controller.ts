@@ -39,11 +39,9 @@ export class SchedulesController {
           body: editedSchedule,
         };
       },
-      generateEvents: async ({ params: { id }, body: { date } }) => {
-        const events = await this.schedulesService.generateEventsForSingleDay(
-          id,
-          new Date(date),
-        );
+      generateEvents: async ({ params: { id }, body: { dates } }) => {
+        const events =
+          await this.schedulesService.generateEventsForMultipleDays(id, dates);
 
         return {
           status: 201,

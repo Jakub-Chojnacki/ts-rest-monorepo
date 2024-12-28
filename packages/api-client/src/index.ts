@@ -154,7 +154,7 @@ export const contract = c.router(
         method: "POST",
         path: "/schedules/:id/generate",
         body: z.object({
-          date: z.string().datetime(),
+          dates: z.array(z.string()),
         }),
         responses: {
           201: z.array(EventSchema),
@@ -170,7 +170,7 @@ export const contract = c.router(
       deleteTiming: {
         method: "DELETE",
         path: "/schedules/timings/:timingId",
-        body:z.any(),
+        body: z.any(),
         responses: {
           200: DailyTimingSchema,
         },

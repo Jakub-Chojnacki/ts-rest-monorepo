@@ -1,18 +1,24 @@
 <script setup lang="ts">
 import { computed, ref, type Ref } from "vue";
+import { storeToRefs } from "pinia";
 import type { DateRange } from "radix-vue";
 import { RangeCalendar } from "@/components/ui/range-calendar";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { eachDayOfInterval, format } from "date-fns";
 
+import { useAuthStore } from "@/store/AuthStore";
+
 import useGetSchedule from "@/queries/useGetSchedule";
+import useGenerateEvents from "@/queries/useGenerateEvents";
 
 import ScheduleTimer from "./ScheduleTimer.vue";
 import Button from "@/components/ui/button/Button.vue";
 
 import { TDayOfWeek, EDaysOfWeek } from "@/types/admin";
 
+const { authHeader } = storeToRefs(useAuthStore());
 const { data, isLoading } = useGetSchedule();
+const { mutate, isLoading: isGeneratingEvents } = useGenerateEvents();
 
 const daysOfWeek: TDayOfWeek[] = [
   {
@@ -69,7 +75,7 @@ const selectedDates = ref({
 const getDateFromSelectedDates = (date: DateRange["start"]) => {
   return `${date?.year}-${date?.month}-${date?.day}`;
 };
-const handleGenerateEvents = (): string[] => {
+const handleGenerateEvents = () => {
   const { start, end } = selectedDates.value;
 
   const startDate = getDateFromSelectedDates(start);
@@ -78,14 +84,25 @@ const handleGenerateEvents = (): string[] => {
   const days = eachDayOfInterval({ start: startDate, end: endDate });
 
   const mappedDays = days.map((day) => format(day, "yyyy-MM-dd"));
+  const scheduleId = data.value?.body.id;
 
-  return mappedDays;
+  if (!scheduleId) return null;
+
+  mutate({
+    body: {
+      dates: mappedDays,
+    },
+    params: {
+      id: scheduleId,
+    },
+    extraHeaders: authHeader.value,
+  });
 };
 </script>
 
 <template>
   <div class="flex flex-col gap-4 mt-4">
-    <div v-if="!isLoading && data?.body">
+    <div v-if="!isLoading && data?.body && !isGeneratingEvents">
       <div v-for="day in daysWithTimings" :key="day.day">
         <ScheduleTimer :day="day" :scheduleId="data?.body.id" />
       </div>
@@ -96,6 +113,9 @@ const handleGenerateEvents = (): string[] => {
     </div>
     <div v-if="isLoading">
       <div>Ładowanie...</div>
+    </div>
+    <div v-if="isGeneratingEvents">
+      <div>Trwa generowanie treningów...</div>
     </div>
   </div>
 </template>
