@@ -16,6 +16,16 @@ export class ReservationsService {
   constructor(private prisma: PrismaService) {}
   async create(reservation: Omit<TReservation, 'id'>) {
     try {
+      const foundUser = await this.prisma.user.findUnique({
+        where: {
+          id: reservation.userId,
+        },
+      });
+
+      if (foundUser.role === 'ADMIN') {
+        throw new BadRequestException('Admins cannot make reservations');
+      }
+
       const validatedReservation =
         contract.reservations.create.body.parse(reservation);
 
