@@ -50,6 +50,36 @@ export class SchedulesController {
           body: events,
         };
       },
+      createTiming: async ({ params: { scheduleId }, body }) => {
+        const newTiming = await this.schedulesService.createTiming(
+          scheduleId,
+          body,
+        );
+
+        return {
+          status: 201,
+          body: newTiming,
+        };
+      },
+      editTiming: async ({ params: { timingId }, body }) => {
+        const editedTiming = await this.schedulesService.editTiming(
+          timingId,
+          body,
+        );
+
+        return {
+          status: 200,
+          body: editedTiming,
+        };
+      },
+      deleteTiming: async ({ params: { timingId } }) => {
+        const deletedTiming = await this.schedulesService.deleteTiming(timingId);
+
+        return {
+          status: 200,
+          body: deletedTiming
+        };
+      },
     });
   }
 }

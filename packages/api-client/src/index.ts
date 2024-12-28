@@ -174,7 +174,7 @@ export const contract = c.router(
           200: DailyTimingSchema,
         },
       },
-      editTiming:{
+      editTiming: {
         method: "PUT",
         path: "/schedules/:timingId",
         body: DailyTimingSchema,
@@ -182,13 +182,14 @@ export const contract = c.router(
           200: DailyTimingSchema,
         },
       },
-      createTiming:{
+      createTiming: {
         method: "POST",
         path: "/schedules/:scheduleId/timings",
         body: DailyTimingSchema,
         responses: {
           201: DailyTimingSchema,
-      }
+        },
+      },
     },
     login: {
       method: "POST",

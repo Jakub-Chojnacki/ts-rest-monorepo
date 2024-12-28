@@ -103,6 +103,56 @@ export class SchedulesService {
     }
   }
 
+  async createTiming(
+    scheduleId: string,
+    timing: Omit<TSchedule['dailyTimings'][0], 'id'>,
+  ) {
+    try {
+      const newTiming = await this.prisma.dailyTiming.create({
+        data: { ...timing, scheduleId },
+      });
+
+      return newTiming;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new BadRequestException('Invalid timing data provided');
+      }
+
+      throw new InternalServerErrorException('Failed to create timing');
+    }
+  }
+
+  async editTiming(
+    timingId: string,
+    timing: Partial<Omit<TSchedule['dailyTimings'][0], 'id'>>,
+  ) {
+    try {
+      const updatedTiming = await this.prisma.dailyTiming.update({
+        where: { id: timingId },
+        data: timing,
+      });
+
+      return updatedTiming;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new BadRequestException('Invalid timing data provided');
+      }
+
+      throw new InternalServerErrorException('Failed to update timing');
+    }
+  }
+
+  async deleteTiming(timingId: string) {
+    try {
+      const deletedTiming = await this.prisma.dailyTiming.delete({
+        where: { id: timingId },
+      });
+      return deletedTiming;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to delete timing');
+    }
+  }
+
   getDayOfWeek(date: Date) {
     return format(date, 'EEEE').toUpperCase();
   }
