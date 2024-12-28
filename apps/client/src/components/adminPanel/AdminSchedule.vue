@@ -42,13 +42,13 @@ const daysOfWeek: TDayOfWeek[] = [
 
 const daysWithTimings = computed(() => {
   return daysOfWeek.map((day) => {
-    const timings = data.value?.body.dailyTimings?.find(
+    const timing = data.value?.body.dailyTimings?.find(
       (timing) => timing.dayOfWeek === day.day
     );
 
     return {
       ...day,
-      timings,
+      timing,
     };
   });
 });
@@ -56,9 +56,9 @@ const daysWithTimings = computed(() => {
 
 <template>
   <div class="flex flex-col gap-4 mt-4">
-    <div v-if="!isLoading">
+    <div v-if="!isLoading && data?.body">
       <div v-for="day in daysWithTimings" :key="day.day">
-        <ScheduleTimer :day="day" />
+        <ScheduleTimer :day="day" :scheduleId="data?.body.id" />
       </div>
     </div>
     <div v-if="isLoading">

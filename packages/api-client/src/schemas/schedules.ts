@@ -13,8 +13,8 @@ const daysOfWeek = z.enum([
 export const DailyTimingSchema = z.object({
   id: z.string(),
   dayOfWeek: daysOfWeek,
-  start: z.date(),
-  end: z.date(),
+  start: z.date().or(z.string()),
+  end: z.date().or(z.string()),
   scheduleId: z.string(),
 });
 

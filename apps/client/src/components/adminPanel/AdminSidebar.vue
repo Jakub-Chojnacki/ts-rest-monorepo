@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, type Component } from "vue";
 import { useRouter } from "vue-router";
-import { cn } from "@/lib/utils";
-import Separator from "@/components/ui/separator/Separator.vue";
 import { BookOpenCheck, CalendarClock } from "lucide-vue-next";
+
+import { cn } from "@/lib/utils";
+
+import Separator from "@/components/ui/separator/Separator.vue";
 
 interface Item {
   title: string;

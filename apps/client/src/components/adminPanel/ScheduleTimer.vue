@@ -1,20 +1,39 @@
 <script setup lang="ts">
 import { defineProps, ref } from "vue";
+import { storeToRefs } from "pinia";
 import { parseISO } from "date-fns";
 import { TDailyTiming } from "api-contract";
 import VueDatePicker from "@vuepic/vue-datepicker";
+
+import { useAuthStore } from "@/store/AuthStore";
+
+import useDeleteTiming from "@/queries/useDeleteTiming";
+import useCreateTiming from "@/queries/useCreateTiming";
+import useEditTiming from "@/queries/useEditTiming";
 
 import Button from "@/components/ui/button/Button.vue";
 
 import { TDayOfWeek } from "@/types/admin";
 
 type TProps = {
-  day: TDayOfWeek & { timings?: TDailyTiming };
+  day: TDayOfWeek & { timing?: TDailyTiming };
+  scheduleId: string;
 };
 
-const { day } = defineProps<TProps>();
+const { day, scheduleId } = defineProps<TProps>();
+const { mutate: deleteTiming } = useDeleteTiming();
+const { mutate: createTiming } = useCreateTiming();
+const { mutate: editTiming } = useEditTiming();
 
-const defaultTime = {
+const { authHeader } = storeToRefs(useAuthStore());
+
+type TSingleTime = {
+  hours: string;
+  minutes: string;
+  seconds: string;
+};
+
+const defaultTime: TSingleTime = {
   hours: "",
   minutes: "",
   seconds: "",
@@ -35,9 +54,11 @@ const extractDateAndHour = (timestamp?: string) => {
   };
 };
 
-const startTime = ref(extractDateAndHour(day.timings?.start));
+const startTime = ref<TSingleTime>(
+  extractDateAndHour(day.timing?.start as string)
+);
 
-const endTime = ref(extractDateAndHour(day.timings?.end));
+const endTime = ref<TSingleTime>(extractDateAndHour(day.timing?.end as string));
 
 const isAddingSchedule = ref(false);
 
@@ -45,12 +66,58 @@ const enableIsAddingSchedule = (): void => {
   isAddingSchedule.value = true;
 };
 
+const convertTimeToString = (timeString: TSingleTime) => {
+  const { hours, minutes, seconds } = timeString;
+
+  const todayMidnight = new Date();
+  todayMidnight.setHours(Number(hours));
+  todayMidnight.setMinutes(Number(minutes));
+  todayMidnight.setSeconds(Number(seconds));
+
+  return todayMidnight.toISOString();
+};
+
 const handleSaveSchedule = (): void => {
-  //console.log(startTime.value, endTime.value);  //TODO: save schedule mutation
+  if (day.timing) {
+    editTiming({
+      params: {
+        timingId: day.timing.id,
+      },
+      body: {
+        dayOfWeek: day.day,
+        start: convertTimeToString(startTime.value),
+        end: convertTimeToString(endTime.value),
+        scheduleId,
+      },
+      extraHeaders: authHeader.value,
+    });
+  } else {
+    createTiming({
+      params: {
+        scheduleId,
+      },
+      body: {
+        dayOfWeek: day.day,
+        start: convertTimeToString(startTime.value),
+        end: convertTimeToString(endTime.value),
+        scheduleId,
+      },
+      extraHeaders: authHeader.value,
+    });
+  }
+
+  isAddingSchedule.value = false;
 };
 
 const handleDeleteSchedule = (): void => {
-  //TODO: delete schedule mutation
+  if (day.timing) {
+    deleteTiming({
+      params: { timingId: day.timing.id },
+      body: {},
+      extraHeaders: authHeader.value,
+    });
+  }
+
   startTime.value = defaultTime;
   endTime.value = defaultTime;
   isAddingSchedule.value = false;
@@ -60,7 +127,7 @@ const handleDeleteSchedule = (): void => {
 <template>
   <div class="px-4">
     <div class="text-md font-semibold">{{ day.label }}</div>
-    <div class="flex gap-4 items-center" v-if="day.timings || isAddingSchedule">
+    <div class="flex gap-4 items-center" v-if="day.timing || isAddingSchedule">
       <VueDatePicker
         v-model="startTime"
         time-picker

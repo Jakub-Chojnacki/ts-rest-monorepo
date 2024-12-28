@@ -73,11 +73,12 @@ export class SchedulesController {
         };
       },
       deleteTiming: async ({ params: { timingId } }) => {
-        const deletedTiming = await this.schedulesService.deleteTiming(timingId);
+        const deletedTiming =
+          await this.schedulesService.deleteTiming(timingId);
 
         return {
           status: 200,
-          body: deletedTiming
+          body: deletedTiming,
         };
       },
     });

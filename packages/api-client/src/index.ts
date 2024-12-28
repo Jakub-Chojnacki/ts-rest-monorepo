@@ -169,15 +169,16 @@ export const contract = c.router(
       },
       deleteTiming: {
         method: "DELETE",
-        path: "/schedules/:timingId",
+        path: "/schedules/timings/:timingId",
+        body:z.any(),
         responses: {
           200: DailyTimingSchema,
         },
       },
       editTiming: {
         method: "PUT",
-        path: "/schedules/:timingId",
-        body: DailyTimingSchema,
+        path: "/schedules/timings/:timingId",
+        body: DailyTimingSchema.omit({ id: true }),
         responses: {
           200: DailyTimingSchema,
         },
@@ -185,7 +186,7 @@ export const contract = c.router(
       createTiming: {
         method: "POST",
         path: "/schedules/:scheduleId/timings",
-        body: DailyTimingSchema,
+        body: DailyTimingSchema.omit({ id: true }),
         responses: {
           201: DailyTimingSchema,
         },

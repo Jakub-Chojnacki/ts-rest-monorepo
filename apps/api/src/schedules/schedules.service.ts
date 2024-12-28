@@ -229,8 +229,14 @@ export class SchedulesService {
         throw new BadRequestException('No schedule was found for this date');
       }
 
-      const start = this.combineDateWithScheduleTime(date, dailyTiming.start);
-      const end = this.combineDateWithScheduleTime(date, dailyTiming.end);
+      const start = this.combineDateWithScheduleTime(
+        date,
+        dailyTiming.start as Date,
+      );
+      const end = this.combineDateWithScheduleTime(
+        date,
+        dailyTiming.end as Date,
+      );
 
       const count = this.getCountOfEvents(
         new Date(start),
