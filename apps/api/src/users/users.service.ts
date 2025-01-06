@@ -23,10 +23,8 @@ export class UsersService {
 
       return user;
     } catch (error) {
-      // Log the error if desired
       console.error(`Error finding user with username ${username}:`, error);
 
-      // Throw a generic error to avoid leaking database details
       throw new InternalServerErrorException('Error retrieving user');
     }
   }
