@@ -1,4 +1,4 @@
-This is a monorepo project built with Turborepo, integrating NestJS for the backend, Vue for the frontend, and ts-rest for type-safe API contracts between them. It's a simple app for booking a training with a personal trainer. I have created it as a demo/PoC and to test this stack and to make an assignment for one of my university classes. The code is definitely not optimal since I just want to get it running and tinker with ts-rest. There are many things that could be improved like the projects architecture, the configuration of monorepo, schemas and error handling. 
+This is a monorepo project built with Turborepo, integrating NestJS for the backend, Vue for the frontend, and ts-rest for type-safe API contracts between them. It's a simple app for booking a training with a personal trainer. I have created it as a demo/PoC and to test this stack. There are many things that could be improved like the projects architecture, the configuration of monorepo, schemas and error handling. 
 
   
 ### Project Structure
