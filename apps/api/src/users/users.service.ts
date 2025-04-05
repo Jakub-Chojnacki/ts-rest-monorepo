@@ -11,19 +11,19 @@ import { PrismaService } from 'src/prisma.service';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async findOne(username: string): Promise<User | undefined> {
+  async findOne(id: string): Promise<User | undefined> {
     try {
       const user = await this.prisma.user.findFirst({
-        where: { username },
+        where: { id },
       });
 
       if (!user) {
-        throw new NotFoundException(`User with username ${username} not found`);
+        throw new NotFoundException(`User not found`);
       }
 
       return user;
     } catch (error) {
-      console.error(`Error finding user with username ${username}:`, error);
+      console.error(`Error finding user`, error);
 
       throw new InternalServerErrorException('Error retrieving user');
     }

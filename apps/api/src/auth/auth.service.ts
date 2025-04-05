@@ -61,7 +61,7 @@ export class AuthService {
   async getUserFromToken(token: string) {
     try {
       const decoded = this.jwtService.verify(token);
-      const user = await this.usersService.findOne(decoded.username);
+      const user = await this.usersService.findOne(decoded.sub);
 
       return {
         userId: user.id,

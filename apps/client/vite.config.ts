@@ -53,12 +53,13 @@ export default defineConfig({
             urlPattern: ({ url }) => {
               return url.pathname.startsWith("/api");
             },
-            handler: "StaleWhileRevalidate" as const,
+            handler: "NetworkFirst" as const,
             options: {
               cacheName: "api-cache",
               cacheableResponse: {
                 statuses: [0, 200],
               },
+              
             },
           },
         ],

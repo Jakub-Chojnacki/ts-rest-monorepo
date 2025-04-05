@@ -6,10 +6,11 @@ import { useAuthStore } from "@/store/AuthStore";
 
 const useAuthMe = () => {
   const { authHeader, userId } = storeToRefs(useAuthStore());
+
   const query = apiClient.auth.useQuery(
-    ["user", userId],
+    ["user", userId.value],
     () => ({
-      extraHeaders: authHeader.value,
+      extraHeaders: authHeader.value || {},
     }),
     { enabled: !!authHeader.value }
   );

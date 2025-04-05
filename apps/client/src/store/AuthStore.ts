@@ -1,21 +1,19 @@
 import { defineStore } from "pinia";
 import { useLocalStorage } from "@vueuse/core";
-import { ref, watch } from "vue";
+import { computed } from "vue";
 import { router } from "@/lib/router";
 import { toast } from "vue-sonner";
+import { useQueryClient } from "@tanstack/vue-query";
 
 export const useAuthStore = defineStore("auth", () => {
   //This entire store will be refactored when refresh tokens are added
   const accessToken = useLocalStorage<string>("access_token", "");
   const userId = useLocalStorage<string>("userId", "");
+  const queryClient = useQueryClient();
 
-  const authHeader = ref(
-    accessToken.value ? { Authorization: `Bearer ${accessToken.value}` } : {}
+  const authHeader = computed(() =>
+    accessToken.value ? { Authorization: `Bearer ${accessToken.value}` } : null
   );
-
-  watch(accessToken, () => {
-    authHeader.value = { Authorization: `Bearer ${accessToken.value}` };
-  });
 
   const handleLogin = ({
     access_token: token,
@@ -31,6 +29,8 @@ export const useAuthStore = defineStore("auth", () => {
   const handleLogout = (): void => {
     accessToken.value = "";
     userId.value = "";
+    queryClient.invalidateQueries(["user"]);
+    caches.delete("api-cache");
     router.push("/login");
     toast.success("Zostałeś pomyślnie wylogowany/a!");
   };
