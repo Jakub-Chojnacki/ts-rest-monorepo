@@ -6,13 +6,22 @@ import MainLayout from "@/components/MainLayout.vue";
 import MainCalendar from "@/components/MainCalendar.vue";
 
 import { EventType } from "api-contract";
+import useAuthMe from "@/queries/useAuthMe";
+import { toast } from "vue-sonner";
 
 const showModal = ref(false);
 const selectedEvent = ref<EventType | null>(null);
+const { data } = useAuthMe();
 
 const handleSelectEvent = (event: EventType): void => {
-  selectedEvent.value = event;
-  showModal.value = true;
+  if (data?.value?.body.role === "USER") {
+    selectedEvent.value = event;
+    showModal.value = true;
+  } else {
+    toast.error("Administratorzy nie mogą rezerwować wizyt", {
+      closeButton: true,
+    });
+  }
 };
 
 const handleCloseModal = (): void => {
@@ -24,7 +33,7 @@ const handleCloseModal = (): void => {
 <template>
   <MainLayout>
     <div class="h-fullNoHeader p-4">
-      <MainCalendar @selectEvent="handleSelectEvent"/>
+      <MainCalendar @selectEvent="handleSelectEvent" />
       <ReservationModal
         v-if="selectedEvent"
         :showModal="showModal"

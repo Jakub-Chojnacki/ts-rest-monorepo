@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "watch": "vite build -w"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.15",
@@ -41,12 +42,14 @@
   },
   "devDependencies": {
     "@mdi/font": "^7.4.47",
+    "@vite-pwa/assets-generator": "^1.0.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.16",
     "typescript": "~5.6.2",
     "vite": "^6.0.1",
+    "vite-plugin-pwa": "^1.0.0",
     "vue-tsc": "^2.1.10"
   }
 }

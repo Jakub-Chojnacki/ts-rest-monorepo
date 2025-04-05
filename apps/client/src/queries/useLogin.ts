@@ -10,7 +10,10 @@ const useLogin = () => {
   const mutation = apiClient.login.useMutation({
     onSuccess: ({ body }) => {
       toast.success(
-        "Udało się zalogować. Zostaniesz przeniesiony/a do ekranu głównego!"
+        "Udało się zalogować. Zostaniesz przeniesiony/a do ekranu głównego!",
+        {
+          closeButton: true,
+        }
       );
       handleLogin(body);
     },

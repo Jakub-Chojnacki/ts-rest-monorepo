@@ -16,7 +16,7 @@ const useCreateTiming = () => {
       toast.success("Grafik został dodany!");
     },
     onError: () => {
-      toast.error("Wystąpił błąd poczas doawania grafiku. Spróbuj ponownie.");
+      toast.error("Wystąpił błąd poczas dodawania grafiku. Spróbuj ponownie.");
     },
   });
 

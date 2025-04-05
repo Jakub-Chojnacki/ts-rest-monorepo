@@ -10,7 +10,10 @@ const useSignup = () => {
   const mutation = apiClient.signup.useMutation({
     onSuccess: ({ body }) => {
       toast.success(
-        "Udało się zarejestrować. Zostaniesz przeniesiony/a do ekranu głównego!"
+        "Udało się zarejestrować. Zostaniesz przeniesiony/a do ekranu głównego!",
+        {
+          closeButton: true,
+        }
       );
       handleLogin({
         access_token: body.access_token,

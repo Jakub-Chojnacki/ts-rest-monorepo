@@ -32,7 +32,7 @@ export class SchedulesService {
       });
 
       return schedule;
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException('Failed to fetch schedule');
     }
   }
@@ -226,7 +226,7 @@ export class SchedulesService {
       );
 
       if (!dailyTiming) {
-        return []
+        return [];
       }
 
       const start = this.combineDateWithScheduleTime(
