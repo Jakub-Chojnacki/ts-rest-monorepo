@@ -21,10 +21,6 @@ const { authHeader } = storeToRefs(useAuthStore());
 const { data, isLoading } = useGetSchedule();
 const { mutate, isLoading: isGeneratingEvents } = useGenerateEvents();
 
-console.log(data.value?.body);
-const scheduleId = data.value?.body.id;
-console.log(scheduleId);
-
 const daysOfWeek: TDayOfWeek[] = [
   {
     day: EDaysOfWeek.MONDAY,

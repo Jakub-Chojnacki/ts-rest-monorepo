@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, PluginOption } from "vite";
 import vue from "@vitejs/plugin-vue";
 import commonjs from "@rollup/plugin-commonjs";
 import autoprefixer from "autoprefixer";
@@ -9,9 +9,8 @@ import { VitePWA } from "vite-plugin-pwa";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    // @ts-ignore: There is a problem with current version of vue plugin
-    vue(),
-    // @ts-ignore: There is a problem with current version of vue plugin
+    //There seems to be a with vite plugins so we need to assert type as PluginOption
+    vue() as PluginOption,
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
@@ -54,7 +53,7 @@ export default defineConfig({
             urlPattern: ({ url }) => {
               return url.pathname.startsWith("/api");
             },
-            handler: "CacheFirst" as const,
+            handler: "StaleWhileRevalidate" as const,
             options: {
               cacheName: "api-cache",
               cacheableResponse: {
@@ -64,7 +63,7 @@ export default defineConfig({
           },
         ],
       },
-    }),
+    }) as PluginOption,
   ],
   css: {
     postcss: {
