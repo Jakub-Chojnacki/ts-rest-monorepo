@@ -18,12 +18,30 @@ export class UsersService {
       });
 
       if (!user) {
-        throw new NotFoundException(`User with username ${username} not found`);
+        throw new NotFoundException(`User not found`);
       }
 
       return user;
     } catch (error) {
-      console.error(`Error finding user with username ${username}:`, error);
+      console.error(`Error finding user`, error);
+
+      throw new InternalServerErrorException('Error retrieving user');
+    }
+  }
+
+  async findById(id: string): Promise<User | null> {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: { id },
+      });
+
+      if (!user) {
+        throw new NotFoundException(`User not found`);
+      }
+
+      return user;
+    } catch (error) {
+      console.error(`Error finding user`, error);
 
       throw new InternalServerErrorException('Error retrieving user');
     }

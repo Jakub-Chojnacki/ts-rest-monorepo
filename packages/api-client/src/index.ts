@@ -171,6 +171,9 @@ export const contract = c.router(
         method: "DELETE",
         path: "/schedules/timings/:timingId",
         body: z.any(),
+        pathParams: z.object({
+          timingId: z.string(),
+        }),
         responses: {
           200: DailyTimingSchema,
         },
@@ -179,6 +182,9 @@ export const contract = c.router(
         method: "PUT",
         path: "/schedules/timings/:timingId",
         body: DailyTimingSchema.omit({ id: true }),
+        pathParams: z.object({
+          timingId: z.string(),
+        }),
         responses: {
           200: DailyTimingSchema,
         },
@@ -187,6 +193,9 @@ export const contract = c.router(
         method: "POST",
         path: "/schedules/:scheduleId/timings",
         body: DailyTimingSchema.omit({ id: true }),
+        pathParams: z.object({
+          scheduleId: z.string(),
+        }),
         responses: {
           201: DailyTimingSchema,
         },
